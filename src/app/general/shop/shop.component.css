@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/* Enhanced Products Section Styles */
+
+/* Search & Filters Container */
+.products-filters {
+  background: linear-gradient(135deg, rgba(232, 205, 184, 0.6), rgba(255, 239, 218, 0.8));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(195, 123, 137, 0.2);
+  transition: all 0.3s ease;
+}
+
+.products-filters:hover {
+  border-color: rgba(195, 123, 137, 0.4);
+  box-shadow: 0 8px 24px rgba(85, 0, 29, 0.12);
+}
+
+/* Input Styling */
+.filter-input {
+  background: rgba(255, 239, 218, 0.9);
+  border: 1px solid rgba(140, 63, 87, 0.2);
+  transition: all 0.3s ease;
+}
+
+.filter-input:hover {
+  border-color: rgba(140, 63, 87, 0.4);
+}
+
+.filter-input:focus {
+  background: rgba(255, 239, 218, 1);
+  border-color: var(--color-accent-1);
+  box-shadow: 0 0 0 3px rgba(195, 123, 137, 0.15);
+}
+
+/* Price Range Inputs */
+.price-input {
+  background: rgba(255, 239, 218, 0.9);
+  border: 1px solid rgba(140, 63, 87, 0.2);
+  transition: all 0.3s ease;
+}
+
+.price-input:focus {
+  border-color: var(--color-accent-1);
+  box-shadow: 0 0 0 2px rgba(195, 123, 137, 0.15);
+}
+
+/* Pagination Buttons */
+.pagination-btn {
+  background: rgba(255, 239, 218, 0.5);
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pagination-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: var(--color-accent-1);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  z-index: 0;
+}
+
+.pagination-btn:hover::before {
+  width: 200%;
+  height: 200%;
+}
+
+.pagination-btn:hover {
+  color: var(--color-secondary);
+  border-color: var(--color-accent-1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(195, 123, 137, 0.3);
+}
+
+.pagination-btn.active {
+  background: var(--gradient-primary);
+  color: var(--color-secondary);
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 16px rgba(85, 0, 29, 0.3);
+}
+
+/* Header Enhancement */
+.products-header {
+  position: relative;
+  display: inline-block;
+}
+
+.products-header::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--gradient-primary);
+  border-radius: 2px;
+}
+
+/* No Results Message */
+.no-results {
+  padding: 3rem;
+  background: rgba(232, 205, 184, 0.3);
+  border-radius: 1rem;
+  border: 2px dashed rgba(140, 63, 87, 0.3);
+}
+
+/* Grid Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.products-grid > * {
+  animation: fadeInUp 0.5s ease forwards;
+}

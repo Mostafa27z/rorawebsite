@@ -1,0 +1,169 @@
+<!-- Hero Section -->
+<section
+  class="min-h-[70vh] flex flex-col justify-center items-center text-center px-6 py-12"
+  style="background: var(--gradient-primary);"
+>
+  <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-wide" style="color: var(--color-secondary);">
+    Welcome to Rora Store
+  </h1>
+  <p class="text-lg md:text-xl max-w-2xl mb-10 leading-relaxed" style="color: var(--color-secondary); opacity: 0.95;">
+    Discover elegant makeup, accessories, and skincare — handpicked just for you.
+  </p>
+  <button
+    class="font-semibold px-10 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+    style="background-color: var(--color-secondary); color: var(--color-primary);"
+    onmouseover="this.style.backgroundColor='var(--color-accent-1)'; this.style.color='var(--color-neutral-dark)';"
+    onmouseout="this.style.backgroundColor='var(--color-secondary)'; this.style.color='var(--color-primary)';"
+  >
+    Shop Now
+  </button>
+</section>
+
+<!-- Category Section -->
+<section class="py-20 px-6" style="background-color: var(--color-secondary);">
+  <h2 class="text-4xl font-semibold text-center mb-12 tracking-tight" style="color: var(--color-primary);">
+    Shop by Category
+  </h2>
+
+  <div class="relative max-w-7xl mx-auto">
+    <!-- Loading State -->
+    <div *ngIf="isLoadingCategories" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2" style="border-color: var(--color-primary);"></div>
+    </div>
+
+    <!-- Carousel Container -->
+    <div *ngIf="!isLoadingCategories && categories.length > 0" class="relative">
+      <!-- Left Arrow -->
+      <button
+        (click)="scrollCarousel('left', 'category-carousel')"
+        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        style="color: var(--color-primary);"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- Carousel -->
+      <div
+        id="category-carousel"
+        class="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide px-12"
+        style="scrollbar-width: none; -ms-overflow-style: none;"
+      >
+        <div
+          *ngFor="let category of categories; let i = index"
+          class="flex-none w-80"
+        >
+          <app-category-card
+            [title]="category.name"
+            [color]="getCategoryColor(i)"
+          ></app-category-card>
+        </div>
+      </div>
+
+      <!-- Right Arrow -->
+      <button
+        (click)="scrollCarousel('right', 'category-carousel')"
+        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        style="color: var(--color-primary);"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoadingCategories && categories.length === 0" class="text-center py-12">
+      <p class="text-lg" style="color: var(--color-primary); opacity: 0.7;">
+        No categories available at the moment.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-20 px-6" style="background-color: var(--color-neutral-light);">
+  <h2 class="text-4xl font-semibold text-center mb-12 tracking-tight" style="color: var(--color-primary);">
+    Featured Products
+  </h2>
+
+  <div class="relative max-w-7xl mx-auto">
+    <!-- Loading State -->
+    <div *ngIf="isLoadingProducts" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2" style="border-color: var(--color-primary);"></div>
+    </div>
+
+    <!-- Carousel Container -->
+    <div *ngIf="!isLoadingProducts && products.length > 0" class="relative">
+      <!-- Left Arrow -->
+      <button
+        (click)="scrollCarousel('left', 'product-carousel')"
+        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        style="color: var(--color-primary);"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <!-- Carousel -->
+      <div
+        id="product-carousel"
+        class="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide px-12"
+        style="scrollbar-width: none; -ms-overflow-style: none;"
+      >
+        <div
+          *ngFor="let product of products; let i = index"
+          class="flex-none w-72"
+        >
+          <app-product-card
+            [title]="product.name"
+            [price]="product.price"
+             [id]="product.id"
+            [imageColor]="getProductImageColor(i)"
+          ></app-product-card>
+        </div>
+      </div>
+
+      <!-- Right Arrow -->
+      <button
+        (click)="scrollCarousel('right', 'product-carousel')"
+        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        style="color: var(--color-primary);"
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoadingProducts && products.length === 0" class="text-center py-12">
+      <p class="text-lg" style="color: var(--color-primary); opacity: 0.7;">
+        No products available at the moment.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section
+  class="py-24 px-6 text-center"
+  style="background: var(--gradient-accent);"
+>
+  <h2 class="text-4xl font-semibold mb-6 tracking-tight" style="color: var(--color-primary);">
+    Join Our Beauty Circle <i class="fa-brands fa-gratipay text-[var(--color-primary)]"></i>
+  </h2>
+  <p class="text-lg mb-10 max-w-2xl mx-auto leading-relaxed" style="color: var(--color-neutral-dark); opacity: 0.85;">
+    Be the first to know about exclusive offers, new arrivals, and special discounts.
+  </p>
+  <button
+    class="font-semibold px-10 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+    style="background-color: var(--color-primary); color: var(--color-secondary);"
+    onmouseover="this.style.backgroundColor='var(--color-accent-2)';"
+    onmouseout="this.style.backgroundColor='var(--color-primary)';"
+  >
+    Subscribe Now
+  </button>
+</section>

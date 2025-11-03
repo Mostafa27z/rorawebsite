@@ -1,1 +1,49 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+/* ────────────────────────────────
+   🎨 Rora Store Global Color Palette
+   Elegant, feminine, and warm — no whites used
+──────────────────────────────── */
+
+/* Root Variables */
+:root {
+  /* ===== BRAND COLORS ===== */
+  --color-primary: #55001D;      /* Main brand color — buttons, navbar, highlights */
+  --color-secondary: #FFEFDA;    /* Main background — soft, warm base for pages */
+
+  /* ===== ACCENT COLORS ===== */
+  --color-accent-1: #C37B89;     /* Hover states, highlights, secondary buttons */
+  --color-accent-2: #8C3F57;     /* Section titles, icons, card borders */
+
+  /* ===== NEUTRAL TONES ===== */
+  --color-neutral-dark: #2C1A1E; /* Main text color — instead of pure black */
+  --color-neutral-light: #E8CDB8;/* Secondary backgrounds, subtle dividers */
+
+  /* ===== GRADIENTS ===== */
+  --gradient-primary: linear-gradient(135deg, #55001D, #8C3F57); /* Hero banners, CTA backgrounds */
+  --gradient-accent: linear-gradient(135deg, #C37B89, #FFEFDA);  /* Highlights, card accents */
+}
+
+/* ===== GLOBAL STYLES ===== */
+body {
+  background-color: var(--color-secondary);
+  color: var(--color-neutral-dark);
+  font-family: 'Inter', sans-serif;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease forwards;
+}

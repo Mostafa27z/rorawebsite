@@ -1,0 +1,114 @@
+<!-- 🛒 Floating Cart Icon -->
+<div
+  class="fixed bottom-6 right-6 z-50 flex items-center justify-center bg-[var(--color-primary)] text-[var(--color-secondary)] rounded-full w-14 h-14 shadow-lg cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300"
+  (click)="togglePopup()"
+>
+  <i class="fas fa-shopping-cart text-2xl"></i>
+  <span
+    *ngIf="cartItems.length > 0"
+    class="absolute top-2 right-2 bg-[var(--color-accent-2)] text-xs font-bold text-[var(--color-secondary)] px-2 py-[2px] rounded-full"
+  >
+    {{ cartItems.length }}
+  </span>
+</div>
+
+<!-- 🪄 Cart Popup -->
+<div
+  *ngIf="showPopup"
+  class="fixed inset-0 bg-[rgba(0,0,0,0.4)] bg-opacity-40 backdrop-blur-sm flex justify-end z-50 animate-fadeIn"
+  (click)="togglePopup()"
+>
+  <div
+    class="bg-[var(--color-secondary)] text-[var(--color-primary)] w-96 h-full p-6 shadow-2xl flex flex-col rounded-l-2xl animate-slideIn"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">🛍 Your Cart</h2>
+      <button
+        class="text-[var(--color-accent-2)] hover:scale-110 transition"
+        (click)="togglePopup()"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex-1 flex items-center justify-center">
+      <i class="fas fa-spinner fa-spin text-3xl text-[var(--color-accent-2)]"></i>
+    </div>
+
+    <!-- Cart Items -->
+    <div *ngIf="!loading && cartItems.length > 0" class="flex-1 overflow-y-auto">
+      <div
+        *ngFor="let item of cartItems"
+        class="flex justify-between items-center py-3 border-b border-[var(--color-neutral-light)]"
+      >
+        <div>
+          <h3 class="font-semibold">{{ item.name }}</h3>
+          <p class="text-sm opacity-80">EGP {{ item.price }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            class="px-2 py-1 bg-[var(--color-accent-1)] rounded-lg hover:bg-[var(--color-accent-2)] transition"
+            (click)="decreaseQuantity(item)"
+          >
+            <i class="fas fa-minus text-xs"></i>
+          </button>
+          <span class="font-semibold">{{ item.quantity }}</span>
+          <button
+            class="px-2 py-1 bg-[var(--color-accent-1)] rounded-lg hover:bg-[var(--color-accent-2)] transition"
+            (click)="increaseQuantity(item)"
+          >
+            <i class="fas fa-plus text-xs"></i>
+          </button>
+          <button
+            class="text-[var(--color-accent-2)] hover:text-red-600 transition ml-3"
+            (click)="removeItem(item.id!)"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div
+      *ngIf="!loading && cartItems.length === 0"
+      class="flex flex-col items-center justify-center flex-1 text-center opacity-80"
+    >
+      <i class="fas fa-box-open text-4xl mb-3"></i>
+      <p>Your cart is empty.</p>
+    </div>
+
+    <!-- Footer -->
+  
+<div
+  *ngIf="cartItems.length > 0"
+  class="mt-4 border-t border-[var(--color-neutral-light)] pt-4"
+>
+  <div class="flex justify-between text-lg font-semibold mb-3">
+    <span>Total:</span>
+    <span>EGP {{ total }}</span>
+  </div>
+
+  <div class="space-y-3">
+    <button
+      class="w-full bg-[var(--color-primary)] text-[var(--color-secondary)] py-3 rounded-xl hover:bg-[var(--color-accent-2)] transition disabled:opacity-60"
+      (click)="placeOrder()"
+      [disabled]="placingOrder"
+    >
+      <i *ngIf="placingOrder" class="fas fa-spinner fa-spin mr-2"></i>
+      {{ placingOrder ? 'Placing Order...' : 'Place Order' }}
+    </button>
+
+    <button
+      class="w-full border border-[var(--color-primary)] text-[var(--color-primary)] py-3 rounded-xl hover:bg-[var(--color-accent-1)] transition"
+      (click)="clearCart()"
+    >
+      Clear Cart
+    </button>
+  </div>
+</div>
+
+  </div>
+</div>

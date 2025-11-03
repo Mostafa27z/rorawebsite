@@ -1,0 +1,107 @@
+<section class="about-section">
+  <div class="container">
+    
+    <!-- 🌸 Hero Section -->
+    <div class="about-hero">
+      <div class="hero-content">
+        <h1 class="main-title">
+          About Rora
+          <span class="title-decoration"></span>
+        </h1>
+        <p class="hero-subtitle">Where Beauty Meets Elegance</p>
+        <p class="hero-description">
+          Rora is your destination for premium makeup, accessories, and beauty essentials. 
+          We believe every girl deserves to feel confident, radiant, and beautiful in her own unique way.
+        </p>
+      </div>
+      <div class="hero-visual">
+        <div class="visual-circle circle-1"></div>
+        <div class="visual-circle circle-2"></div>
+        <div class="visual-circle circle-3"></div>
+        <i class="fas fa-heart hero-icon"></i>
+      </div>
+    </div>
+
+    <!-- 📊 Stats Section -->
+    <div class="stats-grid">
+      <div *ngFor="let stat of stats" class="stat-card">
+        <i class="fas {{stat.icon}} stat-icon"></i>
+        <h3 class="stat-number">{{stat.number}}</h3>
+        <p class="stat-label">{{stat.label}}</p>
+      </div>
+    </div>
+
+    <!-- 💝 Our Story -->
+    <div class="story-section">
+      <h2 class="section-title">
+        Our Story
+        <span class="title-underline"></span>
+      </h2>
+      <div class="story-content">
+        <div class="story-text">
+          <p class="story-paragraph">
+            Founded in 2020, Rora began with a simple dream: to create a beauty haven where 
+            every girl can discover products that make her feel amazing. What started as a 
+            small online boutique has blossomed into a thriving community of beauty enthusiasts.
+          </p>
+          <p class="story-paragraph">
+            We carefully handpick each product, ensuring it meets our strict standards for 
+            quality, safety, and sustainability. From vibrant lipsticks to sparkling accessories, 
+            every item in our collection tells a story of craftsmanship and care.
+          </p>
+          <p class="story-paragraph">
+            Today, Rora serves thousands of customers worldwide, but our mission remains unchanged: 
+            to help you express your unique beauty, inside and out.
+          </p>
+        </div>
+        <div class="story-visual flex-wrap">
+          <div class="visual-box box-1">
+            
+            <i class="fa-solid fa-wand-magic"></i>
+          </div>
+          <div class="visual-box box-2">
+            <i class="fas fa-crown"></i>
+          </div>
+          <div class="visual-box box-3">
+            <i class="fas fa-gift"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ✨ Our Values -->
+    <div class="values-section">
+      <h2 class="section-title">
+        What We Stand For
+        <span class="title-underline"></span>
+      </h2>
+      <div class="values-grid">
+        <div *ngFor="let value of values" class="value-card px-4 py-2 rounded rounded-lg">
+          <div class="value-icon-wrapper">
+            <i class="fas {{value.icon}} value-icon"></i>
+          </div>
+          <h3 class="value-title">{{value.title}}</h3>
+          <p class="value-description">{{value.description}}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 👥 Our Team -->
+    <div class="team-section">
+      <h2 class="section-title">
+        Meet Our Team
+        <span class="title-underline"></span>
+      </h2>
+      <div class="team-grid">
+        <div *ngFor="let member of team" class="team-card">
+          <div class="team-avatar">
+            <i class="fas {{member.icon}}"></i>
+          </div>
+          <h3 class="team-name">{{member.name}}</h3>
+          <p class="team-role">{{member.role}}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

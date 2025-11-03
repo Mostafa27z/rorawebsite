@@ -1,0 +1,70 @@
+<section class="min-h-screen flex items-center justify-center bg-[var(--color-secondary)] px-4">
+  <div class="bg-[var(--color-neutral-light)] p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h2 class="text-3xl font-bold text-[var(--color-primary)] mb-6 text-center">Create Account</h2>
+
+    <form (ngSubmit)="onSubmit()" class="space-y-5">
+      <div>
+        <label class="block text-[var(--color-primary)] font-medium mb-1">Name</label>
+        <input
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          required
+          class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)]"
+        />
+      </div>
+
+      <div>
+        <label class="block text-[var(--color-primary)] font-medium mb-1">Email</label>
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)]"
+        />
+      </div>
+
+      <div>
+        <label class="block text-[var(--color-primary)] font-medium mb-1">Password</label>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          required
+          class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)]"
+        />
+      </div>
+
+      <div>
+        <label class="block text-[var(--color-primary)] font-medium mb-1">Confirm Password</label>
+        <input
+          type="password"
+          [(ngModel)]="password_confirmation"
+          name="password_confirmation"
+          required
+          class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)]"
+        />
+      </div>
+
+      <p *ngIf="errorMessage" class="text-[var(--color-accent-2)] text-sm text-center">
+        {{ errorMessage }}
+      </p>
+
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="w-full bg-[var(--color-primary)] text-[var(--color-secondary)] py-3 rounded-xl font-semibold hover:bg-[var(--color-accent-2)] transition"
+      >
+        {{ loading ? 'Signing up...' : 'Sign Up' }}
+      </button>
+    </form>
+
+    <p class="text-sm text-center mt-4 text-[var(--color-neutral-dark)]">
+      Already have an account?
+      <a routerLink="/login" class="text-[var(--color-primary)] font-medium hover:underline">
+        Log in
+      </a>
+    </p>
+  </div>
+</section>

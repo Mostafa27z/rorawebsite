@@ -1,0 +1,8 @@
+/* Smooth hover lift animation */
+:host {
+  display: block;
+  transition: transform 0.2s ease;
+}
+:host(:hover) {
+  transform: translateY(-4px);
+}

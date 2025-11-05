@@ -1,0 +1,169 @@
+<section class="min-h-screen flex items-center justify-center bg-[var(--color-secondary)] px-4 py-8">
+  <div class="bg-[var(--color-neutral-light)] p-6 md:p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h2 class="text-2xl md:text-3xl font-bold text-[var(--color-primary)] mb-6 text-center">Update Profile</h2>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
+      <div class="flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        {{ successMessage }}
+      </div>
+    </div>
+
+    <!-- General Errors -->
+    <div *ngIf="errors.general" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+      <div class="flex items-center">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        {{ errors.general[0] }}
+      </div>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="space-y-4">
+      <!-- Name Field -->
+      <div>
+        <label class="block text-[var(--color-primary)] font-medium mb-1 text-sm md:text-base">Name *</label>
+        <input
+          type="text"
+          [(ngModel)]="name"
+          name="name"
+          required
+          [class.border-red-500]="errors.name"
+          class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)] border-2 transition-colors"
+          [class.focus:border-[var(--color-primary)]="!errors.name"
+          [class.focus:border-red-500]="errors.name"
+        />
+        <div *ngIf="errors.name" class="mt-1 text-red-600 text-xs flex items-center">
+          <i class="fas fa-exclamation-triangle mr-1"></i>
+          {{ getFirstError('name') }}
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div>
+        <label class="block text-[var(--color-primary)] font-medium mb-1 text-sm md:text-base">Email *</label>
+        <input
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          required
+          [class.border-red-500]="errors.email"
+          class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)] border-2 transition-colors"
+          [class.focus:border-[var(--color-primary)]="!errors.email"
+          [class.focus:border-red-500]="errors.email"
+        />
+        <div *ngIf="errors.email" class="mt-1 text-red-600 text-xs flex items-center">
+          <i class="fas fa-exclamation-triangle mr-1"></i>
+          {{ getFirstError('email') }}
+        </div>
+      </div>
+
+      <!-- Phone Field -->
+      <div>
+        <label class="block text-[var(--color-primary)] font-medium mb-1 text-sm md:text-base">Phone</label>
+        <input
+          type="tel"
+          [(ngModel)]="phone"
+          name="phone"
+          (input)="formatPhone($event)"
+          [class.border-red-500]="errors.phone"
+          class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)] border-2 transition-colors"
+          [class.focus:border-[var(--color-primary)]="!errors.phone"
+          [class.focus:border-red-500]="errors.phone"
+          placeholder="(123) 456-7890"
+        />
+        <div *ngIf="errors.phone" class="mt-1 text-red-600 text-xs flex items-center">
+          <i class="fas fa-exclamation-triangle mr-1"></i>
+          {{ getFirstError('phone') }}
+        </div>
+      </div>
+
+      <!-- Password Change Section -->
+      <div class="pt-4 border-t border-gray-300">
+        <h3 class="text-lg font-semibold text-[var(--color-primary)] mb-3">Change Password</h3>
+        <p class="text-xs text-gray-600 mb-3">Leave blank if you don't want to change your password</p>
+
+        <!-- Old Password -->
+        <div class="mb-4">
+          <label class="block text-[var(--color-primary)] font-medium mb-1 text-sm md:text-base">Old Password</label>
+          <input
+            type="password"
+            [(ngModel)]="old_password"
+            name="old_password"
+            [class.border-red-500]="errors.old_password"
+            class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)] border-2 transition-colors"
+            [class.focus:border-[var(--color-primary)]="!errors.old_password"
+            [class.focus:border-red-500]="errors.old_password"
+            placeholder="Enter old password"
+          />
+          <div *ngIf="errors.old_password" class="mt-1 text-red-600 text-xs flex items-center">
+            <i class="fas fa-exclamation-triangle mr-1"></i>
+            {{ getFirstError('old_password') }}
+          </div>
+        </div>
+
+        <!-- New Password -->
+        <div class="mb-4">
+          <label class="block text-[var(--color-primary)] font-medium mb-1 text-sm md:text-base">New Password</label>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            [class.border-red-500]="errors.password"
+            class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)] border-2 transition-colors"
+            [class.focus:border-[var(--color-primary)]="!errors.password"
+            [class.focus:border-red-500]="errors.password"
+            placeholder="Enter new password"
+          />
+          <div *ngIf="errors.password" class="mt-1 text-red-600 text-xs flex items-center">
+            <i class="fas fa-exclamation-triangle mr-1"></i>
+            {{ getFirstError('password') }}
+          </div>
+          <div *ngIf="!errors.password" class="mt-1 text-gray-600 text-xs">
+            Must be at least 8 characters with uppercase, lowercase, and number
+          </div>
+        </div>
+
+        <!-- Confirm New Password -->
+        <div>
+          <label class="block text-[var(--color-primary)] font-medium mb-1 text-sm md:text-base">Confirm New Password</label>
+          <input
+            type="password"
+            [(ngModel)]="password_confirmation"
+            name="password_confirmation"
+            [class.border-red-500]="errors.password_confirmation"
+            class="w-full px-4 py-3 rounded-lg focus:outline-none text-[var(--color-neutral-dark)] bg-[var(--color-secondary)] border-2 transition-colors"
+            [class.focus:border-[var(--color-primary)]="!errors.password_confirmation"
+            [class.focus:border-red-500]="errors.password_confirmation"
+            placeholder="Confirm new password"
+          />
+          <div *ngIf="errors.password_confirmation" class="mt-1 text-red-600 text-xs flex items-center">
+            <i class="fas fa-exclamation-triangle mr-1"></i>
+            {{ getFirstError('password_confirmation') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="w-full bg-[var(--color-primary)] text-[var(--color-secondary)] py-3 rounded-xl font-semibold hover:bg-[var(--color-accent-2)] transition disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+      >
+        <span *ngIf="loading" class="flex items-center justify-center">
+          <i class="fas fa-spinner fa-spin mr-2"></i>
+          Saving...
+        </span>
+        <span *ngIf="!loading">
+          Save Changes
+        </span>
+      </button>
+    </form>
+
+    <p class="text-sm text-center mt-4 text-[var(--color-neutral-dark)]">
+      <a routerLink="/dashboard" class="text-[var(--color-primary)] font-medium hover:underline flex items-center justify-center">
+        <i class="fas fa-arrow-left mr-2"></i>
+        Back to Dashboard
+      </a>
+    </p>
+  </div>
+</section>

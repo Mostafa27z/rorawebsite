@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { Product } from '../../services/store.service';
 
 @Component({
   selector: 'app-product-card',
@@ -10,21 +11,40 @@ import { RouterLink } from '@angular/router';
   imports:[RouterLink, CommonModule]
 })
 export class ProductCardComponent {
-  @Input() title!: string;
-  @Input() id!: any;
-  @Input() price!: number | string;
-  @Input() imageColor!: string;
-  @Input() imageUrl?: string | null;
-
+  @Input() product!: Product;
+  @Input() imageColor: string = '#E8D5C4'; // Default fallback color
+  @Output() viewDetails = new EventEmitter<Product>();
   /** Optional Add-to-Cart handler (provided by parent) */
   @Input() onAddToCart?: () => void;
 
-  handleAddToCart() {
-    // 🧩 Optional: use parent-provided handler
-    // if (this.onAddToCart) {
-    //   this.onAddToCart();
-    //   return;
-    // }
+  constructor(private router: Router) {}
+
+  // Get the main image URL or first image
+  get mainImageUrl(): string | null {
+    if (!this.product?.images || this.product.images.length === 0) {
+      return null;
+    }
+    
+    // Find main image
+    const mainImage = this.product.images.find((img: any) => img.is_main);
+    if (mainImage?.image_url) {
+      return mainImage.image_url;
+    }
+    
+    // Fallback to first image
+    return this.product.images[0]?.image_url || null;
+  }
+
+  handleViewDetails() {
+    
+    this.viewDetails.emit(this.product);
+  }
+
+  handleAddToCart(event: Event) {
+    // Prevent navigation when clicking add to cart
+    event.stopPropagation();
+
+   
 
     // 🛒 Load or initialize cart
     let cart: { id: any; quantity: number }[] = [];
@@ -37,12 +57,12 @@ export class ProductCardComponent {
 
     if (!Array.isArray(cart)) cart = [];
 
-    const productId = Number(this.id);
+    const productId = Number(this.product.id);
     const existingItem = cart.find((item) => item.id === productId);
 
     // ✅ Add new or notify already added
     if (existingItem) {
-      alert(`🛍️ ${this.title} is already in your cart!`);
+      alert(`🛍️ ${this.product.name} is already in your cart!`);
     } else {
       cart.push({ id: productId, quantity: 1 });
 
@@ -52,7 +72,7 @@ export class ProductCardComponent {
       // 📢 Notify all components that cart changed
       window.dispatchEvent(new Event('cartUpdated'));
 
-      alert(`✅ ${this.title} added to cart!`);
+      alert(`✅ ${this.product.name} added to cart!`);
     }
   }
 }

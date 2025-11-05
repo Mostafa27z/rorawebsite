@@ -1,0 +1,274 @@
+<div class="p-6 management-container rounded-3xl shadow-lg">
+  <!-- Toast Notifications -->
+  <div class="toast-container">
+    <div *ngIf="successMessage" class="toast toast-success animate-slide-in-right">
+      <i class="fas fa-check-circle toast-icon"></i>
+      <div class="toast-content">
+        <div class="toast-title">Success</div>
+        <div class="toast-message">{{ successMessage }}</div>
+      </div>
+      <button class="toast-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div *ngIf="errorMessage" class="toast toast-error animate-slide-in-right">
+      <i class="fas fa-exclamation-circle toast-icon"></i>
+      <div class="toast-content">
+        <div class="toast-title">Error</div>
+        <div class="toast-message">{{ errorMessage }}</div>
+      </div>
+      <button class="toast-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="management-header">
+    <h2 class="header-title">
+      <i class="fas fa-users-cog header-icon"></i>
+      User Management
+    </h2>
+    <button class="btn-primary" (click)="openForm()">
+      <i class="fas fa-user-plus"></i>
+      Add User
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="search-container">
+    <div class="flex-1 relative">
+      <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2" style="color: var(--color-accent-1);"></i>
+      <input
+        type="text"
+        placeholder="Search by name or email..."
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="search()"
+        class="search-input"
+      />
+    </div>
+    <button (click)="search()" class="btn-secondary">
+      <i class="fas fa-search"></i>
+      Search
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-container">
+    <div *ngIf="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th><i class="fas fa-hashtag mr-2"></i></th>
+          <th><i class="fas fa-user mr-2"></i>Name</th>
+          <th><i class="fas fa-envelope mr-2"></i>Email</th>
+          <th><i class="fas fa-user-tag mr-2"></i>Roles</th>
+          <th><i class="fas fa-cog mr-2"></i>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users; let i = index" class="animate-slide-up">
+          <td>{{ user.id }}</td>
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <span *ngFor="let role of user.roles" class="role-badge">
+                {{ role }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn-edit" (click)="openForm(user)">
+                <i class="fas fa-edit"></i>
+                Edit
+              </button>
+              <button class="btn-delete" (click)="deleteUser(user.id!)">
+                <i class="fas fa-trash"></i>
+                Delete
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="!isLoading && users.length === 0">
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="fas fa-users-slash empty-icon"></i>
+              <p class="empty-text">No users found</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+      <button
+        (click)="changePage(currentPage - 1)"
+        [disabled]="!hasPreviousPage"
+        class="pagination-btn"
+      >
+        <i class="fas fa-chevron-left"></i>
+        Previous
+      </button>
+      <span class="pagination-info">
+        <i class="fas fa-file-alt mr-2"></i>
+        Page {{ currentPage }} of {{ lastPage }}
+      </span>
+      <button
+        (click)="changePage(currentPage + 1)"
+        [disabled]="!hasNextPage"
+        class="pagination-btn"
+      >
+        Next
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Add / Edit Form Modal -->
+  <div *ngIf="showForm" class="modal-overlay" (click)="cancelForm()">
+    <div class="modal-content animate-fade-in" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <i class="fas fa-user-edit modal-icon"></i>
+        <h3 class="modal-title">
+          {{ editingUserId ? 'Edit User' : 'Add New User' }}
+        </h3>
+      </div>
+
+      <form [formGroup]="userForm" (ngSubmit)="saveUser()" class="user-form">
+        <!-- Name -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-user"></i>
+            Name <span style="color: #EF4444;">*</span>
+          </label>
+          <input
+            formControlName="name"
+            placeholder="Enter full name"
+            class="form-input"
+            [class.invalid]="userForm.get('name')?.invalid && userForm.get('name')?.touched"
+          />
+          <div class="error-message" *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="userForm.get('name')?.errors?.['required']">Name is required</span>
+            <span *ngIf="userForm.get('name')?.errors?.['maxlength']">Name cannot exceed 100 characters</span>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-envelope"></i>
+            Email <span style="color: #EF4444;">*</span>
+          </label>
+          <input
+            formControlName="email"
+            type="email"
+            placeholder="user@example.com"
+            class="form-input"
+            [class.invalid]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+          />
+          <div class="error-message" *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="userForm.get('email')?.errors?.['email']">Invalid email format</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-lock"></i>
+            Password <span style="color: #EF4444;" *ngIf="!editingUserId">*</span>
+          </label>
+          <input
+            formControlName="password"
+            type="password"
+            [placeholder]="editingUserId ? 'Leave blank to keep current password' : 'Enter password (min 6 characters)'"
+            class="form-input"
+            [class.invalid]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+          />
+          <div class="error-message" *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="userForm.get('password')?.errors?.['required']">Password is required</span>
+            <span *ngIf="userForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-phone"></i>
+            Phone
+          </label>
+          <input
+            formControlName="phone"
+            type="tel"
+            placeholder="Enter phone number"
+            class="form-input"
+            [class.invalid]="userForm.get('phone')?.invalid && userForm.get('phone')?.touched"
+          />
+          <div class="error-message" *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            Phone number cannot exceed 20 characters
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-map-marker-alt"></i>
+            Address
+          </label>
+          <input
+            formControlName="address"
+            placeholder="Enter address"
+            class="form-input"
+            [class.invalid]="userForm.get('address')?.invalid && userForm.get('address')?.touched"
+          />
+          <div class="error-message" *ngIf="userForm.get('address')?.invalid && userForm.get('address')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            Address cannot exceed 255 characters
+          </div>
+        </div>
+
+        <!-- Role -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="fas fa-user-tag"></i>
+            Role <span style="color: #EF4444;">*</span>
+          </label>
+          <input
+            formControlName="role"
+            placeholder="e.g., admin, user, client"
+            class="form-input"
+            [class.invalid]="userForm.get('role')?.invalid && userForm.get('role')?.touched"
+          />
+          <div class="error-message" *ngIf="userForm.get('role')?.invalid && userForm.get('role')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            Role is required
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" (click)="cancelForm()" class="btn-cancel">
+            <i class="fas fa-times mr-2"></i>
+            Cancel
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="userForm.invalid">
+            <i class="fas" [class.fa-save]="!editingUserId" [class.fa-sync-alt]="editingUserId"></i>
+            {{ editingUserId ? 'Update User' : 'Save User' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { environment } from '../../environments/environment.development'; 
-
-export interface User {
+import { environment } from '../../environments/environment.development';
+export interface Role {
   id: number;
   name: string;
+}
+export interface User {
+  id?: number;
+  name: string;
   email: string;
-  roles: { id: number; name: string }[];
+  phone?: string | null;
+  address?: string | null;
+  password?: string;
+  roles?: Role[];
+  role?: string; 
 }
 
 export interface AuthResponse {
@@ -32,6 +39,7 @@ export class AuthService {
     email: string;
     password: string;
     password_confirmation: string;
+    phone?: string; // Include phone in the registration data
     roles?: string[];
   }): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data);
@@ -86,5 +94,18 @@ export class AuthService {
   isAdmin(): boolean {
     const user = this.getUser();
     return !!user?.roles?.some((r) => r.name === 'admin');
+  }
+
+  /** 🖊️ Update the user's profile (name, email, phone) */
+  updateProfile(data: { name?: string; email?: string; phone?: string }): Observable<AuthResponse> {
+    return this.http.put<AuthResponse>(`${this.apiUrl}/profile`, data).pipe(
+      tap((response) => {
+        if (response.user) {
+          // Update the user in localStorage and BehaviorSubject
+          localStorage.setItem('user', JSON.stringify(response.user));
+          this.currentUserSubject.next(response.user);
+        }
+      })
+    );
   }
 }

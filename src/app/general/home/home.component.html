@@ -1,58 +1,78 @@
 <!-- Hero Section -->
 <section
-  class="min-h-[70vh] flex flex-col justify-center items-center text-center px-6 py-12"
+  class="min-h-[80vh] flex flex-col justify-center items-center text-center px-6 py-16 relative overflow-hidden"
   style="background: var(--gradient-primary);"
 >
-  <h1 class="text-5xl md:text-6xl font-bold mb-6 tracking-wide" style="color: var(--color-secondary);">
-    Welcome to Rora Store
-  </h1>
-  <p class="text-lg md:text-xl max-w-2xl mb-10 leading-relaxed" style="color: var(--color-secondary); opacity: 0.95;">
-    Discover elegant makeup, accessories, and skincare — handpicked just for you.
-  </p>
-  <button
-    class="font-semibold px-10 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-    style="background-color: var(--color-secondary); color: var(--color-primary);"
-    onmouseover="this.style.backgroundColor='var(--color-accent-1)'; this.style.color='var(--color-neutral-dark)';"
-    onmouseout="this.style.backgroundColor='var(--color-secondary)'; this.style.color='var(--color-primary)';"
-  >
-    Shop Now
-  </button>
+  <!-- Decorative Elements -->
+  <div class="absolute top-10 left-10 w-32 h-32 bg-[var(--color-accent-1)] rounded-full opacity-20 blur-3xl animate-pulse"></div>
+  <div class="absolute bottom-10 right-10 w-40 h-40 bg-[var(--color-accent-2)] rounded-full opacity-20 blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+  
+  <div class="relative z-10 animate-fadeIn">
+    <div class="mb-8">
+      <i class="fas fa-crown text-6xl md:text-7xl text-[var(--color-secondary)] opacity-90 animate-pulse"></i>
+    </div>
+    <h1 class="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tight" style="color: var(--color-secondary);">
+      Welcome to Rora Store
+    </h1>
+    <p class="text-xl md:text-2xl max-w-3xl mb-12 leading-relaxed mx-auto" style="color: var(--color-secondary); opacity: 0.95;">
+      Discover elegant makeup, accessories, and skincare — handpicked just for you.
+    </p>
+    <button
+      class="group font-bold px-12 py-5 rounded-3xl transition-all duration-300 shadow-2xl hover:shadow-[0_20px_60px_rgba(0,0,0,0.3)] hover:scale-110 relative overflow-hidden"
+      style="background-color: var(--color-secondary); color: var(--color-primary);"
+      onmouseover="this.style.backgroundColor='var(--color-accent-1)'; this.style.color='var(--color-secondary)';"
+      onmouseout="this.style.backgroundColor='var(--color-secondary)'; this.style.color='var(--color-primary)';"
+    >
+      <span class="relative z-10 flex items-center gap-3 text-lg">
+        <i class="fas fa-shopping-bag"></i>
+        Shop Now
+        <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform duration-300"></i>
+      </span>
+    </button>
+  </div>
 </section>
 
 <!-- Category Section -->
-<section class="py-20 px-6" style="background-color: var(--color-secondary);">
-  <h2 class="text-4xl font-semibold text-center mb-12 tracking-tight" style="color: var(--color-primary);">
-    Shop by Category
-  </h2>
+<section class="py-24 px-6" style="background-color: var(--color-secondary);">
+  <div class="text-center mb-16 animate-fadeIn">
+    <div class="inline-block mb-4">
+      <i class="fas fa-th-large text-5xl text-[var(--color-primary)]"></i>
+    </div>
+    <h2 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight" style="color: var(--color-primary);">
+       Categories
+    </h2>
+    <p class="text-[var(--color-accent-2)] text-xl">
+      Explore our carefully curated collections
+    </p>
+  </div>
 
   <div class="relative max-w-7xl mx-auto">
     <!-- Loading State -->
-    <div *ngIf="isLoadingCategories" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2" style="border-color: var(--color-primary);"></div>
+    <div *ngIf="isLoadingCategories" class="flex flex-col items-center justify-center py-20">
+      <i class="fas fa-spinner fa-spin text-6xl text-[var(--color-primary)] mb-4"></i>
+      <p class="text-[var(--color-accent-2)] text-lg">Loading categories...</p>
     </div>
 
     <!-- Carousel Container -->
-    <div *ngIf="!isLoadingCategories && categories.length > 0" class="relative">
+    <div *ngIf="!isLoadingCategories && categories.length > 0" class="relative group">
       <!-- Left Arrow -->
       <button
         (click)="scrollCarousel('left', 'category-carousel')"
-        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-        style="color: var(--color-primary);"
+        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--color-primary)] text-[var(--color-secondary)] rounded-full p-4 shadow-2xl hover:shadow-[0_10px_40px_rgba(85,0,29,0.4)] transition-all duration-300 hover:scale-125 opacity-0 group-hover:opacity-100"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
+        <i class="fas fa-chevron-left text-xl"></i>
       </button>
 
       <!-- Carousel -->
       <div
         id="category-carousel"
-        class="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide px-12"
+        class="flex gap-8 overflow-x-auto scroll-smooth scrollbar-hide px-16"
         style="scrollbar-width: none; -ms-overflow-style: none;"
       >
         <div
           *ngFor="let category of categories; let i = index"
-          class="flex-none w-80"
+          class="flex-none w-80 animate-fadeIn"
+          [style.animation-delay]="i * 0.1 + 's'"
         >
           <app-category-card
             [title]="category.name"
@@ -64,106 +84,143 @@
       <!-- Right Arrow -->
       <button
         (click)="scrollCarousel('right', 'category-carousel')"
-        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-        style="color: var(--color-primary);"
+        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--color-primary)] text-[var(--color-secondary)] rounded-full p-4 shadow-2xl hover:shadow-[0_10px_40px_rgba(85,0,29,0.4)] transition-all duration-300 hover:scale-125 opacity-0 group-hover:opacity-100"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+        <i class="fas fa-chevron-right text-xl"></i>
       </button>
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="!isLoadingCategories && categories.length === 0" class="text-center py-12">
-      <p class="text-lg" style="color: var(--color-primary); opacity: 0.7;">
-        No categories available at the moment.
+    <div *ngIf="!isLoadingCategories && categories.length === 0" class="text-center py-20 animate-fadeIn">
+      <div class="inline-block p-8 rounded-full bg-[var(--color-neutral-light)] mb-6 shadow-lg">
+        <i class="fas fa-folder-open text-6xl text-[var(--color-accent-2)]"></i>
+      </div>
+      <h3 class="text-[var(--color-primary)] text-2xl font-bold mb-3">No Categories Available</h3>
+      <p class="text-[var(--color-accent-2)] text-lg">
+        Check back soon for exciting new collections
       </p>
     </div>
   </div>
 </section>
 
 <!-- Featured Products -->
-<section class="py-20 px-6" style="background-color: var(--color-neutral-light);">
-  <h2 class="text-4xl font-semibold text-center mb-12 tracking-tight" style="color: var(--color-primary);">
-    Featured Products
-  </h2>
+<section class="py-24 px-6 relative" style="background-color: var(--color-neutral-light);">
+  <!-- Decorative Background -->
+  <div class="absolute top-0 left-0 w-64 h-64 bg-[var(--color-accent-1)] rounded-full opacity-10 blur-3xl"></div>
+  <div class="absolute bottom-0 right-0 w-80 h-80 bg-[var(--color-accent-2)] rounded-full opacity-10 blur-3xl"></div>
 
-  <div class="relative max-w-7xl mx-auto">
-    <!-- Loading State -->
-    <div *ngIf="isLoadingProducts" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2" style="border-color: var(--color-primary);"></div>
+  <div class="relative z-10">
+    <div class="text-center mb-16 animate-fadeIn">
+      <div class="inline-block mb-4">
+        <i class="fas fa-star text-5xl text-[var(--color-primary)]"></i>
+      </div>
+      <h2 class="text-5xl md:text-6xl font-bold mb-4 tracking-tight" style="color: var(--color-primary);">
+        Featured Products
+      </h2>
+      <p class="text-[var(--color-accent-2)] text-xl">
+        Handpicked favorites just for you
+      </p>
     </div>
 
-    <!-- Carousel Container -->
-    <div *ngIf="!isLoadingProducts && products.length > 0" class="relative">
-      <!-- Left Arrow -->
-      <button
-        (click)="scrollCarousel('left', 'product-carousel')"
-        class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-        style="color: var(--color-primary);"
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-
-      <!-- Carousel -->
-      <div
-        id="product-carousel"
-        class="flex gap-6 overflow-x-auto scroll-smooth scrollbar-hide px-12"
-        style="scrollbar-width: none; -ms-overflow-style: none;"
-      >
-        <div
-          *ngFor="let product of products; let i = index"
-          class="flex-none w-72"
-        >
-          <app-product-card
-            [title]="product.name"
-            [price]="product.price"
-             [id]="product.id"
-            [imageColor]="getProductImageColor(i)"
-          ></app-product-card>
-        </div>
+    <div class="relative max-w-7xl mx-auto">
+      <!-- Loading State -->
+      <div *ngIf="isLoadingProducts" class="flex flex-col items-center justify-center py-20">
+        <i class="fas fa-spinner fa-spin text-6xl text-[var(--color-primary)] mb-4"></i>
+        <p class="text-[var(--color-accent-2)] text-lg">Loading products...</p>
       </div>
 
-      <!-- Right Arrow -->
-      <button
-        (click)="scrollCarousel('right', 'product-carousel')"
-        class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-        style="color: var(--color-primary);"
-      >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
+      <!-- Carousel Container -->
+      <div *ngIf="!isLoadingProducts && products.length > 0" class="relative group">
+        <!-- Left Arrow -->
+        <button
+          (click)="scrollCarousel('left', 'product-carousel')"
+          class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--color-primary)] text-[var(--color-secondary)] rounded-full p-4 shadow-2xl hover:shadow-[0_10px_40px_rgba(85,0,29,0.4)] transition-all duration-300 hover:scale-125 opacity-0 group-hover:opacity-100"
+        >
+          <i class="fas fa-chevron-left text-xl"></i>
+        </button>
 
-    <!-- Empty State -->
-    <div *ngIf="!isLoadingProducts && products.length === 0" class="text-center py-12">
-      <p class="text-lg" style="color: var(--color-primary); opacity: 0.7;">
-        No products available at the moment.
-      </p>
+        <!-- Carousel -->
+        <div
+          id="product-carousel"
+          class="flex gap-8 overflow-x-auto scroll-smooth scrollbar-hide px-16"
+          style="scrollbar-width: none; -ms-overflow-style: none;"
+        >
+          <div
+            *ngFor="let product of products; let i = index"
+            class="flex-none w-80 animate-fadeIn"
+            [style.animation-delay]="i * 0.1 + 's'"
+          >
+            <app-product-card
+              [product]="product"
+              [imageColor]="getProductImageColor(i)"
+              (viewDetails)="openProductModal($event)"
+            ></app-product-card>
+          </div>
+        </div>
+
+        <!-- Right Arrow -->
+        <button
+          (click)="scrollCarousel('right', 'product-carousel')"
+          class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-[var(--color-primary)] text-[var(--color-secondary)] rounded-full p-4 shadow-2xl hover:shadow-[0_10px_40px_rgba(85,0,29,0.4)] transition-all duration-300 hover:scale-125 opacity-0 group-hover:opacity-100"
+        >
+          <i class="fas fa-chevron-right text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoadingProducts && products.length === 0" class="text-center py-20 animate-fadeIn">
+        <div class="inline-block p-8 rounded-full bg-[var(--color-secondary)] mb-6 shadow-lg">
+          <i class="fas fa-box-open text-6xl text-[var(--color-accent-2)]"></i>
+        </div>
+        <h3 class="text-[var(--color-primary)] text-2xl font-bold mb-3">No Products Available</h3>
+        <p class="text-[var(--color-accent-2)] text-lg">
+          New arrivals coming soon
+        </p>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- CTA Section -->
 <section
-  class="py-24 px-6 text-center"
+  class="py-32 px-6 text-center relative overflow-hidden"
   style="background: var(--gradient-accent);"
 >
-  <h2 class="text-4xl font-semibold mb-6 tracking-tight" style="color: var(--color-primary);">
-    Join Our Beauty Circle <i class="fa-brands fa-gratipay text-[var(--color-primary)]"></i>
-  </h2>
-  <p class="text-lg mb-10 max-w-2xl mx-auto leading-relaxed" style="color: var(--color-neutral-dark); opacity: 0.85;">
-    Be the first to know about exclusive offers, new arrivals, and special discounts.
-  </p>
-  <button
-    class="font-semibold px-10 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-    style="background-color: var(--color-primary); color: var(--color-secondary);"
-    onmouseover="this.style.backgroundColor='var(--color-accent-2)';"
-    onmouseout="this.style.backgroundColor='var(--color-primary)';"
-  >
-    Subscribe Now
-  </button>
+  <!-- Decorative Elements -->
+  <div class="absolute top-10 left-1/4 w-40 h-40 bg-[var(--color-primary)] rounded-full opacity-10 blur-3xl animate-pulse"></div>
+  <div class="absolute bottom-10 right-1/4 w-48 h-48 bg-[var(--color-accent-2)] rounded-full opacity-10 blur-3xl animate-pulse" style="animation-delay: 1.5s;"></div>
+
+  <div class="relative z-10 animate-fadeIn">
+    <div class="mb-6">
+      <i class="fa-solid fa-heart text-6xl text-[var(--color-primary)] animate-pulse"></i>
+    </div>
+    <h2 class="text-5xl md:text-6xl font-bold mb-6 tracking-tight" style="color: var(--color-primary);">
+      Join Our Beauty Circle
+    </h2>
+    <p class="text-xl md:text-2xl mb-12 max-w-3xl mx-auto leading-relaxed" style="color: var(--color-neutral-dark); opacity: 0.9;">
+      Be the first to know about exclusive offers, new arrivals, and special discounts.
+    </p>
+    <button
+      class="group font-bold px-12 py-5 rounded-3xl transition-all duration-300 shadow-2xl hover:shadow-[0_20px_60px_rgba(85,0,29,0.3)] hover:scale-110"
+      style="background-color: var(--color-primary); color: var(--color-secondary);"
+      onmouseover="this.style.backgroundColor='var(--color-accent-2)'; this.style.transform='scale(1.1) rotate(-2deg)';"
+      onmouseout="this.style.backgroundColor='var(--color-primary)'; this.style.transform='scale(1) rotate(0deg)';"
+    >
+      <span class="flex items-center gap-3 text-lg">
+        <i class="fas fa-envelope"></i>
+        Subscribe Now
+        <i class="fas fa-paper-plane group-hover:translate-x-2 group-hover:-translate-y-1 transition-transform duration-300"></i>
+      </span>
+    </button>
+  </div>
 </section>
+
+<!-- Product Modal Component -->
+<app-product-modal
+  [showModal]="showModal"
+  [product]="selectedProduct"
+  (close)="closeModal()"
+  (addToCart)="addToCartFromModal($event)"
+></app-product-modal>
+
+

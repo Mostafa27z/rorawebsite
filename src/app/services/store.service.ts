@@ -11,6 +11,7 @@ export interface Category {
 }
 
 export interface Product {
+category?: Category;
   id?: number;
   category_id: number;
   name: string;
@@ -85,11 +86,16 @@ export class StoreService {
   }
 
   // 🗂️ Categories
-  getAllCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.apiUrl}/categories`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
+ getPaginatedCategories(params?: { page?: number; search?: string }): Observable<PaginatedResponse<Category>> {
+  let httpParams = new HttpParams();
+  if (params?.page) httpParams = httpParams.set('page', params.page);
+  if (params?.search) httpParams = httpParams.set('search', params.search);
+
+  return this.http.get<PaginatedResponse<Category>>(`${this.apiUrl}/categories`, {
+    headers: this.getAuthHeaders(),
+    params: httpParams,
+  });
+}
 
   createCategory(data: Category): Observable<Category> {
     return this.http.post<Category>(`${this.apiUrl}/categories`, data, {
@@ -109,12 +115,23 @@ export class StoreService {
     });
   }
 
-  // 🛍️ Products
-  getAllProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.apiUrl}`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
+  
+  /** 🧮 Get paginated products (Admin only) */
+getAdminProducts(params?: {
+  page?: number;
+  per_page?: number;
+  search?: string;
+}): Observable<PaginatedResponse<Product>> {
+  let httpParams = new HttpParams();
+  if (params?.page) httpParams = httpParams.set('page', params.page);
+  if (params?.per_page) httpParams = httpParams.set('per_page', params.per_page);
+  if (params?.search) httpParams = httpParams.set('search', params.search);
+
+  return this.http.get<PaginatedResponse<Product>>(`${this.apiUrl}`, {
+    headers: this.getAuthHeaders(),
+    params: httpParams,
+  });
+}
 
   getProduct(id: number): Observable<Product> {
     return this.http.get<Product>(`${this.apiUrl}/${id}`, {
@@ -122,17 +139,32 @@ export class StoreService {
     });
   }
 
-  createProduct(data: Product): Observable<Product> {
-    return this.http.post<Product>(`${this.apiUrl}`, data, {
-      headers: this.getAuthHeaders(),
-    });
+  createProduct(data: Product | FormData): Observable<Product> {
+  const headers =
+    data instanceof FormData
+      ? this.getAuthHeaders().delete('Content-Type') // Let browser set multipart boundary
+      : this.getAuthHeaders();
+
+  return this.http.post<Product>(`${this.apiUrl}`, data, { headers });
+}
+
+updateProduct(id: number, data: Product | FormData): Observable<Product> {
+  const headers =
+    data instanceof FormData
+      ? this.getAuthHeaders().delete('Content-Type')
+      : this.getAuthHeaders();
+
+  if (data instanceof FormData) {
+    // ✅ Append Laravel's method spoofing
+    data.append('_method', 'PUT');
+    // ✅ Use POST, not PUT
+    return this.http.post<Product>(`${this.apiUrl}/${id}`, data, { headers });
   }
 
-  updateProduct(id: number, data: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.apiUrl}/${id}`, data, {
-      headers: this.getAuthHeaders(),
-    });
-  }
+  return this.http.put<Product>(`${this.apiUrl}/${id}`, data, { headers });
+}
+
+
 
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, {

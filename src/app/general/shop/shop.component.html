@@ -70,18 +70,15 @@
     <!-- Products Grid -->
     <div *ngIf="!isLoading" class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-16">
       <div
-        *ngFor="let p of products; let i = index"
+        *ngFor="let product of products; let i = index"
         [style.animation-delay]="i * 0.05 + 's'"
         class="animate-fadeIn"
       >
         <app-product-card
-          [title]="p.name"
-          [price]="p.price"
-          [id]="p.id"
-          [imageUrl]="p.images && p.images.length > 0 ? p.images[0].image_url : null"
-          [imageColor]="getProductColor(i)"
-          [onAddToCart]="getAddToCartHandler(p)"
-        ></app-product-card>
+              [product]="product"
+              
+              (viewDetails)="openProductModal($event)"
+            ></app-product-card>
       </div>
 
       <!-- Empty State -->
@@ -142,3 +139,10 @@
     </div>
   </div>
 </section>
+<!-- Product Modal Component -->
+<app-product-modal
+  [showModal]="showModal"
+  [product]="selectedProduct"
+  (close)="closeModal()"
+  (addToCart)="addToCartFromModal($event)"
+></app-product-modal>

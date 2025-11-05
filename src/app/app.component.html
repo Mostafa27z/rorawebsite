@@ -1,6 +1,6 @@
 <!-- 🌸 Navbar -->
 <header
-  class="w-full shadow-md sticky top-0 z-50 transition-all duration-300 backdrop-blur-md"
+  class="w-full shadow-md  z-50 transition-all duration-300 backdrop-blur-md"
   [class.bg-opacity-95]="scrolled"
   [class.py-2]="scrolled"
   style="background-color: var(--color-secondary);"
@@ -56,16 +56,26 @@
 
       <!-- Logged In -->
       <ng-template #loggedIn>
-        <div class="flex items-center gap-3">
-          <span class="font-medium text-[var(--color-primary)]">Hi, {{ currentUser?.name }}</span>
-          <button
-            (click)="logout()"
-            class="bg-[var(--color-accent-2)] text-[var(--color-secondary)] px-4 py-2 rounded-xl hover:opacity-90 transition"
-          >
-            Logout
-          </button>
-        </div>
-      </ng-template>
+  <div class="flex items-center gap-4">
+    <!-- Profile link with icon and improved styling -->
+    <a
+      class="flex items-center gap-2 font-medium text-[var(--color-primary)] hover:text-[var(--color-accent-2)] transition"
+      routerLink="/profile"
+    >
+      <i class="fas fa-user-circle text-[var(--color-primary)] text-xl"></i>
+      Hi, {{ currentUser?.name }}
+    </a>
+
+    <!-- Logout button with hover effect -->
+    <button
+      (click)="logout()"
+      class="bg-[var(--color-accent-2)] text-[var(--color-secondary)] px-6 py-2 rounded-xl hover:bg-[var(--color-accent-1)] transition"
+    >
+      Logout
+    </button>
+  </div>
+</ng-template>
+
     </div>
 
     <!-- Mobile Menu Button -->
@@ -78,58 +88,71 @@
   </nav>
 
   <!-- 📱 Mobile Menu -->
-  <div
-    *ngIf="menuOpen"
-    class="md:hidden bg-[var(--color-secondary)] border-t border-[var(--color-neutral-light)] animate-fadeIn"
-  >
-    <ul class="flex flex-col items-center gap-4 py-4 font-medium">
-      <li><a routerLink="/" (click)="closeMenu()" class="text-[var(--color-primary)]">Home</a></li>
-      <li><a routerLink="/shop" (click)="closeMenu()" class="text-[var(--color-primary)]">Shop</a></li>
-      <li><a routerLink="/about" (click)="closeMenu()" class="text-[var(--color-primary)]">About</a></li>
-      <li><a routerLink="/contact" (click)="closeMenu()" class="text-[var(--color-primary)]">Contact</a></li>
+<div
+  *ngIf="menuOpen"
+  class="md:hidden bg-[var(--color-secondary)] border-t border-[var(--color-neutral-light)] animate-fadeIn"
+>
+  <ul class="flex flex-col items-center gap-4 py-4 font-medium">
+    <li><a routerLink="/" (click)="closeMenu()" class="text-[var(--color-primary)]">Home</a></li>
+    <li><a routerLink="/shop" (click)="closeMenu()" class="text-[var(--color-primary)]">Shop</a></li>
+    <li><a routerLink="/about" (click)="closeMenu()" class="text-[var(--color-primary)]">About</a></li>
+    <li><a routerLink="/contact" (click)="closeMenu()" class="text-[var(--color-primary)]">Contact</a></li>
 
-      <!-- Client -->
-      <li *ngIf="isAuthenticated() && !isAdmin()">
-        <a routerLink="/myorders" (click)="closeMenu()" class="text-[var(--color-primary)]">My Orders</a>
-      </li>
+    <!-- Client -->
+    <li *ngIf="isAuthenticated()">
+      <a routerLink="/myorders" (click)="closeMenu()" class="text-[var(--color-primary)]">My Orders</a>
+    </li>
 
-      <!-- Admin -->
-      <li *ngIf="isAdmin()">
-        <a routerLink="/dashboard" (click)="closeMenu()" class="text-[var(--color-primary)]">Dashboard</a>
-      </li>
+    <!-- Admin -->
+    <li *ngIf="isAdmin()">
+      <a routerLink="/dashboard" (click)="closeMenu()" class="text-[var(--color-primary)]">Dashboard</a>
+    </li>
 
-      <!-- Logged Out -->
-      <li *ngIf="!isAuthenticated()">
-        <a
-          routerLink="/login"
-          (click)="closeMenu()"
-          class="bg-[var(--color-primary)] text-[var(--color-secondary)] px-5 py-2 rounded-xl hover:bg-[var(--color-accent-2)] transition"
-        >
-          Login
-        </a>
-      </li>
-      <li *ngIf="!isAuthenticated()">
-        <a
-          routerLink="/signup"
-          (click)="closeMenu()"
-          class="border border-[var(--color-primary)] text-[var(--color-primary)] px-5 py-2 rounded-xl hover:bg-[var(--color-accent-1)] hover:text-[var(--color-neutral-dark)] transition"
-        >
-          Sign Up
-        </a>
-      </li>
+    <!-- Logged Out -->
+    <li *ngIf="!isAuthenticated()">
+      <a
+        routerLink="/login"
+        (click)="closeMenu()"
+        class="bg-[var(--color-primary)] text-[var(--color-secondary)] px-5 py-2 rounded-xl hover:bg-[var(--color-accent-2)] transition"
+      >
+        Login
+      </a>
+    </li>
+    <li *ngIf="!isAuthenticated()">
+      <a
+        routerLink="/signup"
+        (click)="closeMenu()"
+        class="border border-[var(--color-primary)] text-[var(--color-primary)] px-5 py-2 rounded-xl hover:bg-[var(--color-accent-1)] hover:text-[var(--color-neutral-dark)] transition"
+      >
+        Sign Up
+      </a>
+    </li>
 
-      <!-- Logged In -->
-      <li *ngIf="isAuthenticated()" class="flex flex-col justify-center">
-        <span class="text-[var(--color-primary)] font-medium block mb-2">Hi, {{ currentUser?.name }}</span>
-        <button
-          (click)="logout(); closeMenu()"
-          class="bg-[var(--color-accent-2)] text-[var(--color-secondary)] px-5 py-2 rounded-xl hover:opacity-90 transition mt-4 mx-auto"
-        >
-          Logout
-        </button>
-      </li>
-    </ul>
-  </div>
+    <!-- Logged In -->
+    <li *ngIf="isAuthenticated()" class="flex flex-col justify-center items-center">
+      <span class="text-[var(--color-primary)] font-medium block mb-2">Hi, {{ currentUser?.name }}</span>
+      
+      <!-- Profile link with icon -->
+      <a
+        routerLink="/profile"
+        (click)="closeMenu()"
+        class="flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-accent-2)] transition mb-4"
+      >
+        <i class="fas fa-user-circle text-[var(--color-primary)] text-xl"></i>
+        Profile
+      </a>
+
+      <!-- Logout button -->
+      <button
+        (click)="logout(); closeMenu()"
+        class="bg-[var(--color-accent-2)] text-[var(--color-secondary)] px-5 py-2 rounded-xl hover:opacity-90 transition"
+      >
+        Logout
+      </button>
+    </li>
+  </ul>
+</div>
+
 </header>
 
 <!-- 🌺 Main Content -->

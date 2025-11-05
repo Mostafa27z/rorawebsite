@@ -1,0 +1,342 @@
+<div class="min-h-screen bg-[var(--color-secondary)] py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-16 animate-fadeIn">
+      <div class="inline-block mb-4">
+        <i class="fas fa-chart-pie text-6xl text-[var(--color-primary)]"></i>
+      </div>
+      <h1 class="text-6xl font-bold text-[var(--color-primary)] mb-4 tracking-tight">
+        Dashboard Overview
+      </h1>
+      <p class="text-xl text-[var(--color-accent-2)]">
+        Monitor your store's performance at a glance
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-32">
+      <i class="fas fa-spinner fa-spin text-6xl text-[var(--color-primary)] mb-4"></i>
+      <p class="text-[var(--color-accent-2)] text-lg">Loading dashboard data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="max-w-2xl mx-auto animate-fadeIn">
+      <div class="bg-red-100 border-2 border-red-400 text-red-700 px-8 py-6 rounded-3xl shadow-lg flex items-center gap-4">
+        <i class="fas fa-exclamation-circle text-3xl"></i>
+        <div>
+          <h3 class="font-bold text-lg mb-1">Error Loading Data</h3>
+          <p>{{ error }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!loading && !error" class="space-y-16">
+      <!-- Sales Overview -->
+      <section class="animate-fadeIn">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent-2)] p-4 rounded-2xl shadow-lg">
+            <i class="fas fa-chart-line text-3xl text-[var(--color-secondary)]"></i>
+          </div>
+          <div>
+            <h2 class="text-4xl font-bold text-[var(--color-primary)]">Sales Overview</h2>
+            <p class="text-[var(--color-accent-2)]">Track your revenue and orders</p>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-primary)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-dollar-sign text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+              <i class="fas fa-arrow-up text-green-600 text-xl"></i>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Total Sales</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ formatCurrency(sales?.overview?.total_sales || 0) }}</p>
+          </div>
+
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-accent-2)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-shopping-bag text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+              <i class="fas fa-chart-bar text-blue-600 text-xl"></i>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Total Orders</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ sales?.overview?.total_orders }}</p>
+          </div>
+
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-accent-1)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-receipt text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+              <i class="fas fa-percentage text-purple-600 text-xl"></i>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Average Order Value</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ formatCurrency(sales?.overview?.average_order_value || 0) }}</p>
+          </div>
+        </div>
+
+        <!-- Top Products Table -->
+        <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg">
+          <div class="flex items-center gap-3 mb-6">
+            <i class="fas fa-trophy text-2xl text-[var(--color-primary)]"></i>
+            <h3 class="text-2xl font-bold text-[var(--color-primary)]">Top Products</h3>
+          </div>
+          <div class="overflow-x-auto rounded-2xl">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-2)]">
+                  <th class="px-6 py-4 text-left text-[var(--color-secondary)] font-bold">
+                    <i class="fas fa-box mr-2"></i>Product
+                  </th>
+                  <th class="px-6 py-4 text-right text-[var(--color-secondary)] font-bold">
+                    <i class="fas fa-shopping-cart mr-2"></i>Quantity
+                  </th>
+                  <th class="px-6 py-4 text-right text-[var(--color-secondary)] font-bold">
+                    <i class="fas fa-money-bill-wave mr-2"></i>Revenue
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of sales?.top_products; let i = index" 
+                    class="border-b border-[var(--color-secondary)] hover:bg-[var(--color-secondary)] transition-colors duration-200"
+                    [class.bg-[var(--color-secondary)]="i % 2 === 0">
+                  <td class="px-6 py-4 font-semibold text-[var(--color-primary)]">{{ p.product_name }}</td>
+                  <td class="px-6 py-4 text-right font-bold text-[var(--color-accent-2)]">{{ p.total_sold }}</td>
+                  <td class="px-6 py-4 text-right font-bold text-[var(--color-primary)]">{{ formatCurrency(p.total_revenue) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Customer Overview -->
+      <section class="animate-fadeIn" style="animation-delay: 0.1s;">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="bg-gradient-to-br from-[var(--color-accent-2)] to-[var(--color-accent-1)] p-4 rounded-2xl shadow-lg">
+            <i class="fas fa-users text-3xl text-[var(--color-secondary)]"></i>
+          </div>
+          <div>
+            <h2 class="text-4xl font-bold text-[var(--color-primary)]">Customer Overview</h2>
+            <p class="text-[var(--color-accent-2)]">Understand your customer base</p>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-accent-2)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-user-friends text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+              <i class="fas fa-users text-blue-600 text-xl"></i>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Total Customers</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ customers?.overview?.total_customers }}</p>
+          </div>
+
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-accent-1)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-redo text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+              <i class="fas fa-heart text-red-500 text-xl"></i>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Repeat Customers</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ customers?.overview?.repeat_customers }}</p>
+          </div>
+
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-primary)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-calculator text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+              <i class="fas fa-chart-line text-green-600 text-xl"></i>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Avg. Orders / Customer</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ customers?.overview?.average_orders_per_customer }}</p>
+          </div>
+        </div>
+
+        <!-- Top Customers Table -->
+        <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg">
+          <div class="flex items-center gap-3 mb-6">
+            <i class="fas fa-crown text-2xl text-[var(--color-primary)]"></i>
+            <h3 class="text-2xl font-bold text-[var(--color-primary)]">Top Customers</h3>
+          </div>
+          <div class="overflow-x-auto rounded-2xl">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-gradient-to-r from-[var(--color-accent-2)] to-[var(--color-accent-1)]">
+                  <th class="px-6 py-4 text-left text-[var(--color-secondary)] font-bold">
+                    <i class="fas fa-user mr-2"></i>Name
+                  </th>
+                  <th class="px-6 py-4 text-left text-[var(--color-secondary)] font-bold">
+                    <i class="fas fa-envelope mr-2"></i>Email
+                  </th>
+                  <th class="px-6 py-4 text-right text-[var(--color-secondary)] font-bold">
+                    <i class="fas fa-wallet mr-2"></i>Total Spent
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let c of customers?.top_customers; let i = index" 
+                    class="border-b border-[var(--color-secondary)] hover:bg-[var(--color-secondary)] transition-colors duration-200"
+                    [class.bg-[var(--color-secondary)]="i % 2 === 0">
+                  <td class="px-6 py-4 font-semibold text-[var(--color-primary)]">{{ c.name }}</td>
+                  <td class="px-6 py-4 text-[var(--color-accent-2)]">{{ c.email }}</td>
+                  <td class="px-6 py-4 text-right font-bold text-[var(--color-primary)]">{{ formatCurrency(c.total_spent) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inventory Overview -->
+      <section class="animate-fadeIn" style="animation-delay: 0.2s;">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="bg-gradient-to-br from-[var(--color-accent-1)] to-[var(--color-primary)] p-4 rounded-2xl shadow-lg">
+            <i class="fas fa-boxes text-3xl text-[var(--color-secondary)]"></i>
+          </div>
+          <div>
+            <h2 class="text-4xl font-bold text-[var(--color-primary)]">Inventory Overview</h2>
+            <p class="text-[var(--color-accent-2)]">Monitor your stock levels</p>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-primary)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-cubes text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Total Products</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ inventory?.overview?.total_products }}</p>
+          </div>
+
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-accent-2)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-layer-group text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Total Stock</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ inventory?.overview?.total_stock }}</p>
+          </div>
+
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-[var(--color-accent-1)] p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-balance-scale text-2xl text-[var(--color-secondary)]"></i>
+              </div>
+            </div>
+            <p class="text-sm text-[var(--color-accent-2)] font-semibold mb-2">Avg. Stock / Product</p>
+            <p class="text-3xl font-bold text-[var(--color-primary)]">{{ inventory?.overview?.average_stock }}</p>
+          </div>
+
+          <!-- <div class="bg-gradient-to-br from-red-100 to-orange-100 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 group border-2 border-red-400">
+            <div class="flex items-center justify-between mb-4">
+              <div class="bg-red-500 p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                <i class="fas fa-exclamation-triangle text-2xl text-white"></i>
+              </div>
+            </div>
+            <p class="text-sm text-red-700 font-semibold mb-2">Low Stock Alert</p>
+            <p class="text-3xl font-bold text-red-600">{{ inventory?.overview?.low_stock_products }}</p>
+          </div> -->
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Top Selling Products -->
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg">
+            <div class="flex items-center gap-3 mb-6">
+              <i class="fas fa-fire text-2xl text-[var(--color-primary)]"></i>
+              <h3 class="text-2xl font-bold text-[var(--color-primary)]">Top Selling Products</h3>
+            </div>
+            <div class="space-y-3">
+              <div *ngFor="let p of inventory?.top_selling; let i = index" 
+                   class="flex items-center justify-between p-4 bg-[var(--color-secondary)] rounded-2xl hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div class="flex items-center gap-3">
+                  <div class="bg-[var(--color-primary)] text-[var(--color-secondary)] w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">
+                    {{ i + 1 }}
+                  </div>
+                  <span class="font-semibold text-[var(--color-primary)]">{{ p.name }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-shopping-cart text-[var(--color-accent-2)]"></i>
+                  <span class="font-bold text-[var(--color-accent-2)]">{{ p.total_sold }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Distribution with Pagination -->
+          <div class="bg-[var(--color-neutral-light)] p-8 rounded-3xl shadow-lg">
+            <div class="flex items-center gap-3 mb-6">
+              <i class="fas fa-th-large text-2xl text-[var(--color-primary)]"></i>
+              <h3 class="text-2xl font-bold text-[var(--color-primary)]">Category Stock Distribution</h3>
+            </div>
+            <div class="space-y-3 mb-6">
+              <div *ngFor="let c of paginatedCategories; let i = index" 
+                   class="flex items-center justify-between p-4 bg-[var(--color-secondary)] rounded-2xl hover:shadow-md transition-all duration-200 hover:scale-105">
+                <div class="flex items-center gap-3">
+                  <div class="bg-[var(--color-accent-2)] text-[var(--color-secondary)] w-10 h-10 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-tag"></i>
+                  </div>
+                  <span class="font-semibold text-[var(--color-primary)]">{{ c.category }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <i class="fas fa-box text-[var(--color-accent-2)]"></i>
+                  <span class="font-bold text-[var(--color-accent-2)]">{{ c.total_stock }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination -->
+            <div *ngIf="totalCategoryPages > 1" class="flex justify-center items-center gap-2 flex-wrap">
+              <button
+                (click)="changeCategoryPage(categoryCurrentPage - 1)"
+                [disabled]="categoryCurrentPage === 1"
+                class="px-4 py-2 rounded-xl border-2 border-[var(--color-accent-2)] text-[var(--color-primary)] font-semibold hover:bg-[var(--color-accent-1)] hover:text-[var(--color-secondary)] hover:border-[var(--color-accent-1)] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <i class="fas fa-chevron-left"></i>
+              </button>
+
+              <div class="flex gap-2 flex-wrap justify-center">
+                <button
+                  *ngFor="let pageNum of getVisiblePages()"
+                  (click)="pageNum !== '...' && changeCategoryPage(+pageNum)"
+                  [disabled]="pageNum === '...'"
+                  [ngClass]="{
+                    'bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-2)] text-[var(--color-secondary)] scale-110': categoryCurrentPage === +pageNum,
+                    'bg-[var(--color-secondary)] text-[var(--color-primary)] hover:bg-[var(--color-accent-1)] hover:text-[var(--color-secondary)]': categoryCurrentPage !== +pageNum && pageNum !== '...',
+                    'bg-transparent text-[var(--color-primary)] cursor-default': pageNum === '...'
+                  }"
+                  class="min-w-[2.5rem] h-10 rounded-xl font-bold transition-all duration-300 hover:scale-105 shadow-md disabled:hover:scale-100 disabled:shadow-none"
+                >
+                  {{ pageNum }}
+                </button>
+              </div>
+
+              <button
+                (click)="changeCategoryPage(categoryCurrentPage + 1)"
+                [disabled]="categoryCurrentPage === totalCategoryPages"
+                class="px-4 py-2 rounded-xl border-2 border-[var(--color-accent-2)] text-[var(--color-primary)] font-semibold hover:bg-[var(--color-accent-1)] hover:text-[var(--color-secondary)] hover:border-[var(--color-accent-1)] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <i class="fas fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

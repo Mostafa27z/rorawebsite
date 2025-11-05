@@ -1,0 +1,16 @@
+<div class="min-h-screen flex flex-col items-center justify-center text-center animate-fadeIn p-6"
+     style="background-color: var(--color-secondary); color: var(--color-neutral-dark);">
+
+  <div class="bg-[var(--color-neutral-light)] rounded-3xl shadow-lg p-10 max-w-md w-full">
+    <i class="fas fa-exclamation-triangle text-6xl text-[var(--color-accent-1)] mb-4"></i>
+    <h1 class="text-5xl font-extrabold mb-2">404</h1>
+    <p class="text-lg mb-6 text-[var(--color-accent-2)]">
+      Oops! The page you’re looking for doesn’t exist.
+    </p>
+
+    <button (click)="goHome()"
+      class="bg-[var(--color-primary)] hover:bg-[var(--color-accent-2)] text-white px-6 py-3 rounded-2xl shadow-md transition-all duration-300">
+      <i class="fas fa-arrow-left mr-2"></i> Back to Home
+    </button>
+  </div>
+</div>

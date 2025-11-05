@@ -1,0 +1,146 @@
+<!-- Product Modal -->
+<div 
+  *ngIf="showModal && product"
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn"
+  style="background-color: rgba(0, 0, 0, 0.8);"
+  (click)="closeModal()"
+>
+  <div 
+    class="bg-[var(--color-neutral-light)] rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scaleIn relative"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Close Button -->
+    <button
+      (click)="closeModal()"
+      class="absolute top-4 right-4 z-10 bg-[var(--color-primary)] text-[var(--color-secondary)] w-12 h-12 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
+    >
+      <i class="fas fa-times text-xl"></i>
+    </button>
+
+    <div class="grid md:grid-cols-2 gap-8 p-8">
+      <!-- Image Gallery -->
+      <div class="space-y-4">
+        <!-- Main Image -->
+        <div class="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--color-accent-1)] to-[var(--color-accent-2)] flex items-center justify-center">
+          <img 
+            *ngIf="currentImage"
+            [src]="currentImage"
+            [alt]="product.name"
+            class="w-full h-full object-cover"
+          />
+          <i *ngIf="!currentImage" class="fas fa-gem text-9xl text-[var(--color-secondary)] opacity-50"></i>
+
+          <!-- Navigation Arrows -->
+          <button
+            *ngIf="modalImages.length > 1"
+            (click)="previousImage()"
+            class="absolute left-4 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-[var(--color-secondary)] w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button
+            *ngIf="modalImages.length > 1"
+            (click)="nextImage()"
+            class="absolute right-4 top-1/2 -translate-y-1/2 bg-[var(--color-primary)] text-[var(--color-secondary)] w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
+          >
+            <i class="fas fa-chevron-right"></i>
+          </button>
+
+          <!-- Image Counter -->
+          <div 
+            *ngIf="modalImages.length > 1"
+            class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium"
+          >
+            {{ selectedImageIndex + 1 }} / {{ modalImages.length }}
+          </div>
+        </div>
+
+        <!-- Thumbnail Gallery -->
+        <div *ngIf="modalImages.length > 1" class="flex gap-2 overflow-x-auto pb-2">
+          <button
+            *ngFor="let image of modalImages; let i = index"
+            (click)="selectImage(i)"
+            class="flex-none w-20 h-20 rounded-lg overflow-hidden transition-all duration-300"
+            [class.ring-4]="i === selectedImageIndex"
+            [class.ring-[var(--color-primary)]="i === selectedImageIndex"
+            [class.opacity-50]="i !== selectedImageIndex"
+          >
+            <img 
+              [src]="image.image_url"
+              [alt]="'Thumbnail ' + (i + 1)"
+              class="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+            />
+          </button>
+        </div>
+      </div>
+
+      <!-- Product Details -->
+      <div class="flex flex-col">
+        <!-- Category Badge -->
+        <div *ngIf="product.category" class="inline-flex items-center gap-2 bg-[var(--color-accent-1)]/20 text-[var(--color-primary)] px-4 py-2 rounded-full text-sm font-semibold mb-4 self-start">
+          <i class="fas fa-tag"></i>
+          {{ product.category.name }}
+        </div>
+
+        <!-- Product Name -->
+        <h2 class="text-4xl font-bold text-[var(--color-primary)] mb-4">
+          {{ product.name }}
+        </h2>
+
+        <!-- Price -->
+        <div class="flex items-baseline gap-3 mb-6">
+          <span class="text-5xl font-bold text-[var(--color-primary)]">{{ product.price }}</span>
+          <span class="text-xl text-[var(--color-accent-2)] font-medium">EGP</span>
+        </div>
+
+        <!-- Stock Status -->
+        <div class="flex items-center gap-2 mb-6">
+          <i 
+            class="fas fa-circle text-xs"
+            [class.text-green-500]="product.stock_quantity > 10"
+            [class.text-yellow-500]="product.stock_quantity > 0 && product.stock_quantity <= 10"
+            [class.text-red-500]="product.stock_quantity === 0"
+          ></i>
+          <span class="text-[var(--color-neutral-dark)] font-medium">
+            <ng-container *ngIf="product.stock_quantity > 10">In Stock</ng-container>
+            <ng-container *ngIf="product.stock_quantity > 0 && product.stock_quantity <= 10">
+              Only {{ product.stock_quantity }} left!
+            </ng-container>
+            <ng-container *ngIf="product.stock_quantity === 0">Out of Stock</ng-container>
+          </span>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-8 flex-grow">
+          <h3 class="text-lg font-bold text-[var(--color-primary)] mb-3 flex items-center gap-2">
+            <i class="fas fa-info-circle"></i>
+            Description
+          </h3>
+          <p class="text-[var(--color-neutral-dark)] leading-relaxed">
+            {{ product.description || 'No description available for this product.' }}
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="space-y-3">
+          <button
+            (click)="handleAddToCart()"
+            [disabled]="product.stock_quantity === 0"
+            class="w-full bg-[var(--color-primary)] text-[var(--color-secondary)] py-4 rounded-2xl font-bold text-lg hover:bg-[var(--color-accent-2)] transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          >
+            <i class="fas fa-shopping-cart text-xl"></i>
+            <span *ngIf="product.stock_quantity > 0">Add to Cart</span>
+            <span *ngIf="product.stock_quantity === 0">Out of Stock</span>
+          </button>
+
+          <button
+            (click)="closeModal()"
+            class="w-full bg-[var(--color-secondary)] text-[var(--color-primary)] py-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all duration-300 border-2 border-[var(--color-primary)]"
+          >
+            Continue Shopping
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+<div class="flex min-h-screen bg-[var(--color-bg)] text-[var(--color-primary)]">
+
+  <!-- 📘 Sidebar -->
+  <aside
+    class="w-64 bg-[var(--color-secondary)] shadow-xl flex flex-col justify-between p-5 fixed md:static inset-y-0 left-0 z-50 transition-transform duration-300"
+    [class.-translate-x-full]="!menuOpen && screenWidth < 768"
+  >
+    <div>
+      <!-- 🧭 Logo -->
+      <div class="flex items-center justify-between mb-8">
+        <a routerLink="/dashboard" class="flex items-center gap-2 lex-col justify-center ">
+          <!-- <img src="./images/logo2.svg" alt="Logo" class="h-10 block" /> -->
+          <span class="font-bold text-lg">Rora Admin</span>
+        </a>
+        <button
+          class="md:hidden text-[var(--color-primary)]"
+          (click)="closeSidebar()"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+      </div>
+
+      <!-- 📋 Menu -->
+      <nav class="flex flex-col gap-3">
+        <a
+          routerLink="/dashboard"
+          routerLinkActive="bg-[var(--color-accent-1)] text-[var(--color-neutral-dark)]"
+          class="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-[var(--color-accent-1)] transition"
+          (click)="closeSidebar()"
+        >
+          <i class="fas fa-chart-line"></i> Overview
+        </a>
+
+        <a
+          routerLink="/dashboard/categories"
+          routerLinkActive="bg-[var(--color-accent-1)] text-[var(--color-neutral-dark)]"
+          class="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-[var(--color-accent-1)] transition"
+          (click)="closeSidebar()"
+        >
+          <i class="fas fa-tags"></i> Categories
+        </a>
+
+        <a
+          routerLink="/dashboard/products"
+          routerLinkActive="bg-[var(--color-accent-1)] text-[var(--color-neutral-dark)]"
+          class="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-[var(--color-accent-1)] transition"
+          (click)="closeSidebar()"
+        >
+          <i class="fas fa-box"></i> Products
+        </a>
+
+        <a
+          routerLink="/dashboard/orders"
+          routerLinkActive="bg-[var(--color-accent-1)] text-[var(--color-neutral-dark)]"
+          class="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-[var(--color-accent-1)] transition"
+          (click)="closeSidebar()"
+        >
+          <i class="fas fa-receipt"></i> Orders
+        </a>
+      </nav>
+    </div>
+
+    <!-- ⚙️ Footer -->
+    <div class="mt-10 text-center text-sm opacity-70">
+      <p>© 2025 Rora Store</p>
+    </div>
+  </aside>
+
+  <!-- 📱 Mobile Toggle -->
+  <button
+    class="md:hidden fixed bottom-24 right-6 z-40 bg-[var(--color-primary)] text-[var(--color-secondary)] p-4 rounded-full shadow-md hover:scale-105 transition"
+    (click)="toggleSidebar()"
+  >
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- 🧩 Main Content -->
+  <main class="flex-1  bg-[var(--color-bg)] p-6 overflow-y-auto">
+    <router-outlet></router-outlet>
+  </main>
+</div>

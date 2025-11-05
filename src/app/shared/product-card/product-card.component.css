@@ -6,3 +6,28 @@
 :host(:hover) {
   transform: translateY(-4px);
 }
+/* Modal Styles */
+.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.bg-black {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+
+
+
+
+/* Add any custom styles for the product card here */
+.group {
+  transition: transform 0.3s ease;
+}
+
+.group:hover {
+  transform: scale(1.05);
+}
+
+/* Add more custom styles here */

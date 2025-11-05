@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StoreService, Product } from '../../services/store.service';
 import { OrderService } from '../../services/order.service';
-
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 interface CartItem {
   id: number;
   quantity: number;
@@ -22,7 +23,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
   constructor(
     private storeService: StoreService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private auth :AuthService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -115,7 +118,7 @@ export class CartComponent implements OnInit, OnDestroy {
       quantity: i.quantity,
     }));
     localStorage.setItem('cart', JSON.stringify(simplified));
-    this.emitCartUpdate();
+    // this.emitCartUpdate();
   }
 
   /** 📢 Emit update event */
@@ -158,6 +161,8 @@ export class CartComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.error(err);
         alert('❌ Failed to place order. Please login first.');
+        this.router.navigate(["/login"]);
+        this.placingOrder = false;
       },
       complete: () => (this.placingOrder = false),
     });

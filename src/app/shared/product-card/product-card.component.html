@@ -1,48 +1,54 @@
-<div class="group bg-[var(--color-neutral-light)] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 cursor-pointer">
-  <div  class="block">
-    <!-- Image Container -->
-    <div 
-      class="relative h-64 overflow-hidden flex items-center justify-center"
-      [style.background-color]="imageUrl ? 'transparent' : imageColor"
-    >
-      <!-- Actual Image -->
-      <img 
-        *ngIf="imageUrl"
-        [src]="imageUrl"
-        [alt]="title"
-        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-      />
-      
-      <!-- Fallback Icon -->
-      <div *ngIf="!imageUrl" class="flex flex-col items-center justify-center h-full">
-        <i class="fas fa-gem text-7xl text-[var(--color-secondary)] opacity-80 group-hover:scale-110 transition-transform duration-500"></i>
-      </div>
-
-      <!-- Overlay Badge -->
-      <!-- <div class="absolute top-4 right-4 bg-[var(--color-primary)] text-[var(--color-secondary)] px-4 py-2 rounded-full text-sm font-bold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <i class="fas fa-eye mr-2"></i>View
-      </div> -->
+<div 
+  (click)="handleViewDetails()"
+  class="group bg-[var(--color-neutral-light)] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 cursor-pointer"
+>
+  <!-- Image Container -->
+  <div 
+    class="relative h-64 overflow-hidden flex items-center justify-center"
+    [style.background-color]="mainImageUrl ? 'transparent' : imageColor"
+  >
+    <!-- Actual Image -->
+    <img 
+      *ngIf="mainImageUrl"
+      [src]="mainImageUrl"
+      [alt]="product.name"
+      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+    />
+    
+    <!-- Fallback Icon -->
+    <div *ngIf="!mainImageUrl" class="flex flex-col items-center justify-center h-full">
+      <i class="fas fa-gem text-7xl text-[var(--color-secondary)] opacity-80 group-hover:scale-110 transition-transform duration-500"></i>
     </div>
 
-    <!-- Content -->
-    <div class="p-6">
-      <h3 class="text-xl font-bold text-[var(--color-primary)] mb-3 line-clamp-2 group-hover:text-[var(--color-accent-2)] transition-colors duration-300">
-        {{ title }}
-      </h3>
-      
-      <div class="flex justify-between items-center">
-        <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-bold text-[var(--color-primary)]">{{ price }}</span>
-          <span class="text-sm text-[var(--color-accent-2)] font-medium">EGP</span>
-        </div>
-        
-        <button
-          (click)="handleAddToCart()"
-          class="bg-[var(--color-primary)] text-[var(--color-secondary)] px-5 py-2.5 rounded-xl font-semibold hover:bg-[var(--color-accent-2)] transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
-        >
-          <i class="fas fa-shopping-cart"></i>
-        </button>
+    <!-- Overlay Badge -->
+    <div class="absolute top-4 right-4 bg-[var(--color-primary)] text-[var(--color-secondary)] px-4 py-2 rounded-full text-sm font-bold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <i class="fas fa-eye mr-2"></i>View Details
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="p-6">
+    <h3 class="text-xl font-bold text-[var(--color-primary)] mb-3 line-clamp-2 group-hover:text-[var(--color-accent-2)] transition-colors duration-300">
+      {{ product.name }}
+    </h3>
+    
+    <!-- Description (optional) -->
+    <p *ngIf="product.description" class="text-sm text-gray-600 mb-4 line-clamp-2">
+      {{ product.description }}
+    </p>
+
+    <div class="flex justify-between items-center">
+      <div class="flex items-baseline gap-2">
+        <span class="text-3xl font-bold text-[var(--color-primary)]">{{ product.price }}</span>
+        <span class="text-sm text-[var(--color-accent-2)] font-medium">EGP</span>
       </div>
+      
+      <button
+        (click)="handleAddToCart($event)"
+        class="bg-[var(--color-primary)] text-[var(--color-secondary)] px-5 py-2.5 rounded-xl font-semibold hover:bg-[var(--color-accent-2)] transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105"
+      >
+        <i class="fas fa-shopping-cart"></i>
+      </button>
     </div>
   </div>
 </div>

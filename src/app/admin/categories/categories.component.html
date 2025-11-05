@@ -1,0 +1,262 @@
+<div class="p-4 md:p-6 bg-[var(--color-secondary)] min-h-screen text-[var(--color-neutral-dark)]">
+  <!-- Header -->
+  <div class="mb-6 md:mb-8 animate-fadeIn">
+    <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-2 md:gap-3">
+      <i class="fas fa-folder-open text-[var(--color-accent-2)]"></i>
+      Manage Categories
+    </h1>
+    <p class="text-xs md:text-sm text-[var(--color-neutral-dark)] opacity-70 mt-2">
+      Create, edit, and organize your product categories
+    </p>
+  </div>
+
+  <!-- Search Bar & Actions -->
+  <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-3 md:gap-4 animate-fadeIn">
+    <div class="flex items-center gap-2 flex-1 w-full sm:max-w-md">
+      <div class="relative flex-1">
+        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-accent-2)] opacity-50"></i>
+        <input
+          [(ngModel)]="searchTerm"
+          type="text"
+          placeholder="Search categories..."
+          class="w-full pl-10 pr-4 py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all bg-white text-sm md:text-base"
+        />
+      </div>
+      <button
+        (click)="loadCategories(1)"
+        class="bg-[var(--color-primary)] text-[var(--color-secondary)] px-4 md:px-5 py-2.5 rounded-lg hover:bg-[var(--color-accent-2)] transition-all shadow-md hover:shadow-lg"
+      >
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+
+    <button
+      (click)="resetForm()"
+      class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-2)] text-[var(--color-secondary)] px-5 md:px-6 py-2.5 rounded-lg hover:shadow-lg transition-all flex items-center justify-center gap-2 font-medium text-sm md:text-base"
+    >
+      <i class="fas fa-plus-circle"></i>
+      New Category
+    </button>
+  </div>
+
+  <!-- Add/Edit Form -->
+  <div class="mb-6 md:mb-8 p-4 md:p-6 bg-white rounded-xl shadow-lg border-2 border-[var(--color-neutral-light)] animate-fadeIn">
+    <h2 class="text-lg md:text-xl font-semibold mb-4 flex items-center gap-2 text-[var(--color-accent-2)]">
+      <i [class]="editMode ? 'fas fa-edit' : 'fas fa-plus-circle'"></i>
+      {{ editMode ? 'Edit Category' : 'Add New Category' }}
+    </h2>
+    <form (ngSubmit)="saveCategory()" class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-4 md:items-end">
+      <div class="flex-1 min-w-full md:min-w-[250px]">
+        <label class="block text-xs md:text-sm font-medium mb-2 text-[var(--color-neutral-dark)]">
+          <i class="fas fa-tag mr-1"></i>
+          Category Name
+        </label>
+        <input
+          [(ngModel)]="selectedCategory.name"
+          name="name"
+          type="text"
+          placeholder="Enter category name"
+          required
+          class="w-full px-4 py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
+        />
+      </div>
+
+      <label class="flex items-center gap-2 px-4 py-2.5 bg-[var(--color-neutral-light)] bg-opacity-30 rounded-lg cursor-pointer hover:bg-opacity-50 transition-all">
+        <input
+          [(ngModel)]="selectedCategory.is_active"
+          name="is_active"
+          type="checkbox"
+          class="w-4 h-4 accent-[var(--color-primary)]"
+        />
+        <span class="text-xs md:text-sm font-medium">
+          Active
+        </span>
+      </label>
+
+      <div class="flex gap-2 md:gap-3">
+        <button
+          type="submit"
+          class="flex-1 md:flex-none bg-[var(--color-primary)] text-[var(--color-secondary)] px-5 md:px-6 py-2.5 rounded-lg hover:bg-[var(--color-accent-2)] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 font-medium text-sm md:text-base"
+        >
+          <i [class]="editMode ? 'fas fa-save' : 'fas fa-plus'"></i>
+          {{ editMode ? 'Update' : 'Add' }}
+        </button>
+
+        <button
+          type="button"
+          *ngIf="editMode"
+          (click)="resetForm()"
+          class="flex-1 md:flex-none border-2 border-[var(--color-accent-2)] text-[var(--color-accent-2)] px-5 md:px-6 py-2.5 rounded-lg hover:bg-[var(--color-accent-1)] hover:text-white transition-all flex items-center justify-center gap-2 font-medium text-sm md:text-base"
+        >
+          <i class="fas fa-times-circle"></i>
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-20 animate-fadeIn">
+    <i class="fas fa-spinner fa-spin text-4xl md:text-5xl text-[var(--color-accent-2)]"></i>
+    <p class="mt-4 text-sm md:text-base text-[var(--color-neutral-dark)] opacity-70">Loading categories...</p>
+  </div>
+
+  <!-- Category Table - Desktop View -->
+  <div *ngIf="!loading && categories.length > 0" class="animate-fadeIn">
+    <!-- Desktop Table (hidden on mobile) -->
+    <div class="hidden md:block overflow-x-auto">
+      <div class="bg-white rounded-xl shadow-lg border-2 border-[var(--color-neutral-light)] overflow-hidden">
+        <table class="w-full">
+          <thead class="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent-2)] text-[var(--color-secondary)]">
+            <tr>
+              <th class="px-6 py-4 text-left font-semibold">
+                <i class="fas fa-hashtag mr-2"></i>ID
+              </th>
+              <th class="px-6 py-4 text-left font-semibold">
+                <i class="fas fa-tag mr-2"></i>Name
+              </th>
+              <th class="px-6 py-4 text-center font-semibold">
+                <i class="fas fa-info-circle mr-2"></i>Status
+              </th>
+              <th class="px-6 py-4 text-right font-semibold">
+                <i class="fas fa-cog mr-2"></i>Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cat of categories; let i = index" 
+                class="border-b border-[var(--color-neutral-light)] hover:bg-[var(--color-neutral-light)] hover:bg-opacity-20 transition-colors"
+                [class.bg-[var(--color-neutral-light)]]="i % 2 === 0"
+                [class.bg-opacity-10]="i % 2 === 0">
+              <td class="px-6 py-4 font-medium text-[var(--color-accent-2)]">
+                {{ cat.id }}
+              </td>
+              <td class="px-6 py-4 font-medium">
+                <i class="fas fa-folder mr-2 text-[var(--color-accent-2)]"></i>
+                {{ cat.name }}
+              </td>
+              <td class="px-6 py-4 text-center">
+                <span
+                  class="px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5"
+                  [ngClass]="cat.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+                >
+                  <i [class]="cat.is_active ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+                  {{ cat.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right space-x-3">
+                <button 
+                  (click)="editCategory(cat)" 
+                  class="text-[var(--color-primary)] hover:text-[var(--color-accent-2)] transition-colors font-medium inline-flex items-center gap-1.5"
+                >
+                  <i class="fas fa-edit"></i>
+                  Edit
+                </button>
+                <button 
+                  (click)="deleteCategory(cat.id)" 
+                  class="text-red-600 hover:text-red-800 transition-colors font-medium inline-flex items-center gap-1.5"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                  Delete
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Mobile Card View (hidden on desktop) -->
+    <div class="md:hidden space-y-4">
+      <div *ngFor="let cat of categories; let i = index" 
+           class="bg-white rounded-xl shadow-lg border-2 border-[var(--color-neutral-light)] p-4 hover:shadow-xl transition-shadow">
+        <!-- Header with ID and Status -->
+        <div class="flex items-center justify-between mb-3 pb-3 border-b border-[var(--color-neutral-light)]">
+          <span class="text-xs font-semibold text-[var(--color-accent-2)] flex items-center gap-1">
+            <i class="fas fa-hashtag"></i>
+            ID: {{ cat.id }}
+          </span>
+          <span
+            class="px-2.5 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1.5"
+            [ngClass]="cat.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+          >
+            <i [class]="cat.is_active ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+            {{ cat.is_active ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
+        <!-- Category Name -->
+        <div class="mb-4">
+          <div class="text-sm text-[var(--color-neutral-dark)] opacity-60 mb-1 flex items-center gap-1">
+            <i class="fas fa-tag text-xs"></i>
+            Category Name
+          </div>
+          <div class="font-semibold text-base flex items-center gap-2">
+            <i class="fas fa-folder text-[var(--color-accent-2)]"></i>
+            {{ cat.name }}
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-2 pt-3 border-t border-[var(--color-neutral-light)]">
+          <button 
+            (click)="editCategory(cat)" 
+            class="flex-1 bg-[var(--color-primary)] text-[var(--color-secondary)] py-2.5 px-4 rounded-lg hover:bg-[var(--color-accent-2)] transition-all font-medium text-sm flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-edit"></i>
+            Edit
+          </button>
+          <button 
+            (click)="deleteCategory(cat.id)" 
+            class="flex-1 bg-red-600 text-white py-2.5 px-4 rounded-lg hover:bg-red-700 transition-all font-medium text-sm flex items-center justify-center gap-2"
+          >
+            <i class="fas fa-trash-alt"></i>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && total > perPage" class="flex justify-center mt-6 md:mt-8 gap-1 md:gap-2 flex-wrap animate-fadeIn">
+    <button
+      (click)="goToPage(currentPage - 1)"
+      [disabled]="currentPage === 1"
+      class="px-3 md:px-4 py-2 border-2 border-[var(--color-neutral-light)] rounded-lg hover:bg-[var(--color-accent-1)] hover:text-white hover:border-[var(--color-accent-1)] disabled:opacity-30 disabled:cursor-not-allowed transition-all font-medium text-sm md:text-base"
+    >
+      <i class="fas fa-chevron-left md:mr-1"></i>
+      <span class="hidden sm:inline">Prev</span>
+    </button>
+
+    <ng-container *ngFor="let page of [].constructor(lastPage); let i = index">
+      <button
+        (click)="goToPage(i + 1)"
+        [class.bg-gradient-to-r]="currentPage === i + 1"
+        [class.from-[var(--color-primary)]]="currentPage === i + 1"
+        [class.to-[var(--color-accent-2)]]="currentPage === i + 1"
+        [class.text-[var(--color-secondary)]]="currentPage === i + 1"
+        [class.border-[var(--color-primary)]]="currentPage === i + 1"
+        class="px-3 md:px-4 py-2 border-2 border-[var(--color-neutral-light)] rounded-lg hover:bg-[var(--color-accent-1)] hover:text-white hover:border-[var(--color-accent-1)] transition-all font-medium min-w-[36px] md:min-w-[40px] text-sm md:text-base"
+      >
+        {{ i + 1 }}
+      </button>
+    </ng-container>
+
+    <button
+      (click)="goToPage(currentPage + 1)"
+      [disabled]="currentPage === lastPage"
+      class="px-3 md:px-4 py-2 border-2 border-[var(--color-neutral-light)] rounded-lg hover:bg-[var(--color-accent-1)] hover:text-white hover:border-[var(--color-accent-1)] disabled:opacity-30 disabled:cursor-not-allowed transition-all font-medium text-sm md:text-base"
+    >
+      <span class="hidden sm:inline">Next</span>
+      <i class="fas fa-chevron-right md:ml-1"></i>
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && categories.length === 0" class="text-center py-12 md:py-20 animate-fadeIn">
+    <i class="fas fa-inbox text-5xl md:text-6xl text-[var(--color-accent-2)] opacity-30 mb-4"></i>
+    <p class="text-lg md:text-xl text-[var(--color-neutral-dark)] opacity-60">No categories found</p>
+    <p class="text-xs md:text-sm text-[var(--color-neutral-dark)] opacity-50 mt-2 px-4">Try adjusting your search or create a new category</p>
+  </div>
+</div>

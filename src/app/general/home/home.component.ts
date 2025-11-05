@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { CategoryCardComponent } from '../../shared/category-card/category-card.component';
 import { ProductModalComponent } from '../../shared/product-modal/product-modal.component';
 import { StoreService, Product, Category } from '../../services/store.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ProductCardComponent, CategoryCardComponent, ProductModalComponent, CommonModule],
+  imports: [ProductCardComponent, CategoryCardComponent, ProductModalComponent, CommonModule, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })

@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StoreService, Product, Category, PaginatedResponse } from '../../services/store.service';
 
+interface ValidationErrors {
+  [key: string]: string[];
+}
+
 @Component({
   selector: 'app-products',
   standalone: true,
@@ -28,14 +32,21 @@ export class ProductsComponent implements OnInit {
     is_active: true,
   };
 
-  // 🖼️ Image handling
+  // Validation errors
+  validationErrors: ValidationErrors = {};
+  showValidationErrors = false;
+  
+  // Helper for template
+  Object = Object;
+
+  // Image handling
   imageFiles: File[] = [];
   imagePreviews: string[] = [];
   mainImageIndex: number | null = null;
   existingImages: any[] = [];
   imagesToRemove: number[] = [];
 
-  // 🔍 Product Details Modal
+  // Product Details Modal
   showDetailsModal = false;
   selectedProductDetails: Product | null = null;
   currentImageIndex = 0;
@@ -47,7 +58,6 @@ export class ProductsComponent implements OnInit {
     this.loadCategories();
   }
 
-  // 🧾 Load paginated products
   loadProducts(page = 1) {
     this.loading = true;
     this.storeService
@@ -78,12 +88,128 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  // 🔍 View Product Details
+  // Frontend Validation
+  validateForm(): boolean {
+    this.validationErrors = {};
+    let isValid = true;
+
+    // Validate name
+    if (!this.selectedProduct.name || this.selectedProduct.name.trim() === '') {
+      this.validationErrors['name'] = ['Product name is required'];
+      isValid = false;
+    } else if (this.selectedProduct.name.trim().length < 3) {
+      this.validationErrors['name'] = ['Product name must be at least 3 characters'];
+      isValid = false;
+    } else if (this.selectedProduct.name.length > 255) {
+      this.validationErrors['name'] = ['Product name cannot exceed 255 characters'];
+      isValid = false;
+    }
+
+    // Validate category
+    if (!this.selectedProduct.category_id || this.selectedProduct.category_id === 0) {
+      this.validationErrors['category_id'] = ['Please select a category'];
+      isValid = false;
+    } else {
+      const validCategory = this.categories.find(c => c.id === Number(this.selectedProduct.category_id));
+      if (!validCategory) {
+        this.validationErrors['category_id'] = ['Please select a valid category'];
+        isValid = false;
+      }
+    }
+
+    // Validate price
+    if (!this.selectedProduct.price || this.selectedProduct.price <= 0) {
+      this.validationErrors['price'] = ['Price must be greater than 0'];
+      isValid = false;
+    } else if (this.selectedProduct.price > 999999.99) {
+      this.validationErrors['price'] = ['Price cannot exceed 999,999.99'];
+      isValid = false;
+    } else {
+      const priceStr = String(this.selectedProduct.price);
+      const decimalPart = priceStr.split('.')[1];
+      if (decimalPart && decimalPart.length > 2) {
+        this.validationErrors['price'] = ['Price can have maximum 2 decimal places'];
+        isValid = false;
+      }
+    }
+
+    // Validate stock quantity
+    if (this.selectedProduct.stock_quantity !== undefined && this.selectedProduct.stock_quantity !== null) {
+      if (this.selectedProduct.stock_quantity < 0) {
+        this.validationErrors['stock_quantity'] = ['Stock quantity cannot be negative'];
+        isValid = false;
+      } else if (this.selectedProduct.stock_quantity > 999999) {
+        this.validationErrors['stock_quantity'] = ['Stock quantity cannot exceed 999,999'];
+        isValid = false;
+      } else if (!Number.isInteger(Number(this.selectedProduct.stock_quantity))) {
+        this.validationErrors['stock_quantity'] = ['Stock quantity must be a whole number'];
+        isValid = false;
+      }
+    }
+
+    // Validate description
+    if (this.selectedProduct.description && this.selectedProduct.description.length > 1000) {
+      this.validationErrors['description'] = ['Description cannot exceed 1000 characters'];
+      isValid = false;
+    }
+
+    // Validate images (only for create mode or when adding new images)
+    if (!this.editMode && this.imageFiles.length === 0) {
+      this.validationErrors['images'] = ['Please upload at least one product image'];
+      isValid = false;
+    }
+
+    const totalImages = this.existingImages.length + this.imageFiles.length;
+    if (totalImages > 5) {
+      this.validationErrors['images'] = ['Maximum 5 images allowed'];
+      isValid = false;
+    }
+
+    // Validate image files
+    if (this.imageFiles.length > 0) {
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      
+      for (const file of this.imageFiles) {
+        if (file.size > maxFileSize) {
+          this.validationErrors['images'] = this.validationErrors['images'] || [];
+          this.validationErrors['images'].push(`Image "${file.name}" exceeds 5MB`);
+          isValid = false;
+        }
+        if (!allowedTypes.includes(file.type)) {
+          this.validationErrors['images'] = this.validationErrors['images'] || [];
+          this.validationErrors['images'].push(`Image "${file.name}" has invalid type. Only JPG, PNG, GIF, WEBP allowed`);
+          isValid = false;
+        }
+      }
+    }
+
+    this.showValidationErrors = !isValid;
+    return isValid;
+  }
+
+  // Check if field has errors
+  hasError(field: string): boolean {
+    return this.showValidationErrors && this.validationErrors[field] && this.validationErrors[field].length > 0;
+  }
+
+  // Get error messages for a field
+  getErrors(field: string): string[] {
+    return this.validationErrors[field] || [];
+  }
+
+  // Clear error for a specific field
+  clearFieldError(field: string) {
+    if (this.validationErrors[field]) {
+      delete this.validationErrors[field];
+    }
+  }
+
   viewProductDetails(product: Product) {
     this.selectedProductDetails = product;
     this.currentImageIndex = 0;
     this.showDetailsModal = true;
-    document.body.style.overflow = 'hidden'; // Prevent background scroll
+    document.body.style.overflow = 'hidden';
   }
 
   closeDetailsModal() {
@@ -93,7 +219,6 @@ export class ProductsComponent implements OnInit {
     document.body.style.overflow = 'auto';
   }
 
-  // Navigate through product images
   nextImage() {
     if (this.selectedProductDetails?.images && this.selectedProductDetails.images.length > 0) {
       this.currentImageIndex = (this.currentImageIndex + 1) % this.selectedProductDetails.images.length;
@@ -112,7 +237,6 @@ export class ProductsComponent implements OnInit {
     this.currentImageIndex = index;
   }
 
-  // 🧩 Image Preview for NEW images
   onImageSelect(event: any) {
     const files = Array.from(event.target.files) as File[];
     const remainingSlots = 5 - this.existingImages.length;
@@ -125,6 +249,7 @@ export class ProductsComponent implements OnInit {
       reader.readAsDataURL(file);
     });
     
+    this.clearFieldError('images');
     event.target.value = '';
   }
 
@@ -157,16 +282,23 @@ export class ProductsComponent implements OnInit {
   }
 
   saveProduct() {
+    // Validate form before submission
+    if (!this.validateForm()) {
+      // Scroll to top to show errors
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     const formData = new FormData();
 
-    formData.append('name', this.selectedProduct.name);
+    formData.append('name', this.selectedProduct.name.trim());
     formData.append('category_id', String(this.selectedProduct.category_id));
     formData.append('price', String(this.selectedProduct.price));
     formData.append('stock_quantity', String(this.selectedProduct.stock_quantity || 0));
     formData.append('is_active', this.selectedProduct.is_active ? '1' : '0');
 
     if (this.selectedProduct.description) {
-      formData.append('description', this.selectedProduct.description);
+      formData.append('description', this.selectedProduct.description.trim());
     }
 
     if (this.editMode && this.imagesToRemove.length > 0) {
@@ -194,16 +326,18 @@ export class ProductsComponent implements OnInit {
     }
 
     this.loading = true;
+    this.showValidationErrors = false;
 
     if (this.editMode && this.selectedProduct.id) {
       this.storeService.updateProduct(this.selectedProduct.id, formData as any).subscribe({
         next: () => {
           this.resetForm();
           this.loadProducts(this.currentPage);
+          alert('Product updated successfully!');
         },
         error: (err) => {
           console.error('Update error:', err);
-          alert('Failed to update product: ' + (err.error?.message || err.message));
+          this.handleServerErrors(err);
           this.loading = false;
         },
       });
@@ -212,13 +346,29 @@ export class ProductsComponent implements OnInit {
         next: () => {
           this.resetForm();
           this.loadProducts(1);
+          alert('Product created successfully!');
         },
         error: (err) => {
           console.error('Create error:', err);
-          alert('Failed to create product: ' + (err.error?.message || err.message));
+          this.handleServerErrors(err);
           this.loading = false;
         },
       });
+    }
+  }
+
+  // Handle server-side validation errors
+  handleServerErrors(err: any) {
+    if (err.status === 422 && err.error?.errors) {
+      this.validationErrors = err.error.errors;
+      this.showValidationErrors = true;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Show a summary message
+      const errorCount = Object.keys(this.validationErrors).length;
+      alert(`Please fix ${errorCount} validation error(s)`);
+    } else {
+      alert('Failed to save product: ' + (err.error?.message || err.message || 'Unknown error'));
     }
   }
 
@@ -230,6 +380,8 @@ export class ProductsComponent implements OnInit {
     this.imagesToRemove = [];
     this.mainImageIndex = null;
     this.existingImages = p.images ? JSON.parse(JSON.stringify(p.images)) : [];
+    this.validationErrors = {};
+    this.showValidationErrors = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -240,10 +392,11 @@ export class ProductsComponent implements OnInit {
       this.storeService.deleteProduct(id).subscribe({
         next: () => {
           this.loadProducts(this.currentPage);
+          alert('Product deleted successfully!');
         },
         error: (err) => {
           console.error('Delete error:', err);
-          alert('Failed to delete product');
+          alert('Failed to delete product: ' + (err.error?.message || err.message));
           this.loading = false;
         }
       });
@@ -264,6 +417,8 @@ export class ProductsComponent implements OnInit {
     this.mainImageIndex = null;
     this.existingImages = [];
     this.imagesToRemove = [];
+    this.validationErrors = {};
+    this.showValidationErrors = false;
     this.loading = false;
   }
 

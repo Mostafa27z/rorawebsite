@@ -62,22 +62,51 @@ onSearchChange(value: string) {
 }
 
   /** 🧾 Create or Update */
-  saveCategory() {
+ saveCategory() {
+    // Trim whitespace from name
+    this.selectedCategory.name = this.selectedCategory.name?.trim();
+    
+    // Validate category name
+    if (!this.selectedCategory.name || this.selectedCategory.name.length < 2) {
+      this.showErrorMessage('Please enter a valid category name (at least 2 characters)');
+      return;
+    }
+
     if (this.editMode && this.selectedCategory.id) {
       this.storeService.updateCategory(this.selectedCategory.id, this.selectedCategory).subscribe({
         next: () => {
+          this.showSuccessMessage('Category updated successfully! ✅');
           this.resetForm();
           this.loadCategories();
         },
+        error: (error) => {
+          console.error('Error updating category:', error);
+          this.showErrorMessage('Failed to update category. Please try again.');
+        }
       });
     } else {
       this.storeService.createCategory(this.selectedCategory).subscribe({
         next: () => {
+          this.showSuccessMessage('Category created successfully! ✅');
           this.resetForm();
           this.loadCategories();
         },
+        error: (error) => {
+          console.error('Error creating category:', error);
+          this.showErrorMessage('Failed to create category. Please try again.');
+        }
       });
     }
+  }
+
+  private showSuccessMessage(message: string): void {
+    // You can replace this with a toast notification service
+    alert(message);
+  }
+
+  private showErrorMessage(message: string): void {
+    // You can replace this with a toast notification service
+    alert(message);
   }
 
   /** ✏️ Edit selected category */

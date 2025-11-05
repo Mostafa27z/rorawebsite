@@ -41,234 +41,299 @@
     </button>
   </div>
 
-  <!-- Form -->
-  <div class="mb-6 md:mb-8 p-4 md:p-6 bg-white rounded-xl shadow-lg border-2 border-[var(--color-neutral-light)] animate-fadeIn">
-    <h2 class="text-lg md:text-xl font-semibold mb-3 md:mb-4 flex items-center gap-2 text-[var(--color-accent-2)]">
-      <i [class]="editMode ? 'fas fa-edit' : 'fas fa-plus-circle'"></i>
-      {{ editMode ? 'Edit Product' : 'Add New Product' }}
-    </h2>
-    
-    <form (ngSubmit)="saveProduct()" enctype="multipart/form-data" class="space-y-3 md:space-y-4">
-      <!-- Basic Info Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-        <div>
-          <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
-            <i class="fas fa-tag mr-1"></i>
-            Product Name *
-          </label>
-          <input
-            [(ngModel)]="selectedProduct.name"
-            name="name"
-            required
-            type="text"
-            placeholder="Enter product name"
-            class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
-          />
-        </div>
+ <!-- Form -->
+<div class="mb-6 md:mb-8 p-4 md:p-6 bg-white rounded-xl shadow-lg border-2 border-[var(--color-neutral-light)] animate-fadeIn">
+  <h2 class="text-lg md:text-xl font-semibold mb-3 md:mb-4 flex items-center gap-2 text-[var(--color-accent-2)]">
+    <i [class]="editMode ? 'fas fa-edit' : 'fas fa-plus-circle'"></i>
+    {{ editMode ? 'Edit Product' : 'Add New Product' }}
+  </h2>
 
-        <div>
-          <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
-            <i class="fas fa-folder mr-1"></i>
-            Category *
-          </label>
-          <select
-            [(ngModel)]="selectedProduct.category_id"
-            name="category_id"
-            required
-            class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
-          >
-            <option value="" disabled>Select Category</option>
-            <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
-            <i class="fas fa-dollar-sign mr-1"></i>
-            Price *
-          </label>
-          <input
-            [(ngModel)]="selectedProduct.price"
-            name="price"
-            type="number"
-            step="0.01"
-            required
-            placeholder="0.00"
-            class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
-          />
-        </div>
-
-        <div>
-          <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
-            <i class="fas fa-boxes mr-1"></i>
-            Stock Quantity
-          </label>
-          <input
-            [(ngModel)]="selectedProduct.stock_quantity"
-            name="stock_quantity"
-            type="number"
-            min="0"
-            placeholder="0"
-            class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
-          />
-        </div>
+  <!-- Validation Summary -->
+  <!-- <div *ngIf="showValidationErrors && Object.keys(validationErrors).length > 0" 
+       class="mb-4 p-3 md:p-4 bg-red-50 border-l-4 border-red-500 rounded-lg animate-shake">
+    <div class="flex items-start gap-2">
+      <i class="fas fa-exclamation-circle text-red-500 mt-0.5"></i>
+      <div class="flex-1">
+        <h3 class="font-semibold text-red-800 text-sm md:text-base mb-1">Please correct the following errors:</h3>
+        <ul class="list-disc list-inside text-xs md:text-sm text-red-700 space-y-0.5">
+          <li *ngFor="let field of Object.keys(validationErrors)">
+            <strong>{{ field === 'category_id' ? 'Category' : field === 'stock_quantity' ? 'Stock Quantity' : (field | titlecase) }}:</strong> 
+            {{ validationErrors[field][0] }}
+          </li>
+        </ul>
       </div>
-
-      <!-- Description -->
+    </div>
+  </div> -->
+  
+  <form (ngSubmit)="saveProduct()" enctype="multipart/form-data" class="space-y-3 md:space-y-4">
+    <!-- Basic Info Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+      <!-- Product Name -->
       <div>
         <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
-          <i class="fas fa-align-left mr-1"></i>
-          Description
+          <i class="fas fa-tag mr-1"></i>
+          Product Name *
         </label>
-        <textarea
-          [(ngModel)]="selectedProduct.description"
-          name="description"
-          placeholder="Enter product description..."
-          rows="3"
-          class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
-        ></textarea>
-      </div>
-
-      <!-- Active Toggle -->
-      <label class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-[var(--color-neutral-light)] bg-opacity-30 rounded-lg cursor-pointer hover:bg-opacity-50 transition-all w-fit">
         <input
-          [(ngModel)]="selectedProduct.is_active"
-          name="is_active"
-          type="checkbox"
-          class="w-4 h-4 accent-[var(--color-primary)]"
+          [(ngModel)]="selectedProduct.name"
+          name="name"
+          required
+          type="text"
+          placeholder="Enter product name"
+          (input)="clearFieldError('name')"
+          [class.border-red-500]="hasError('name')"
+          [class.border-[var(--color-neutral-light)]]="!hasError('name')"
+          class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
         />
-        <span class="text-sm font-medium">
-          
-          Active Product
-        </span>
+        <div *ngIf="hasError('name')" class="mt-1 text-xs md:text-sm text-red-600 flex items-center gap-1">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ getErrors('name')[0] }}</span>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
+          <i class="fas fa-folder mr-1"></i>
+          Category *
+        </label>
+        <select
+          [(ngModel)]="selectedProduct.category_id"
+          name="category_id"
+          required
+          (change)="clearFieldError('category_id')"
+          [class.border-red-500]="hasError('category_id')"
+          [class.border-[var(--color-neutral-light)]]="!hasError('category_id')"
+          class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
+        >
+          <option value="0" disabled>Select Category</option>
+          <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+        </select>
+        <div *ngIf="hasError('category_id')" class="mt-1 text-xs md:text-sm text-red-600 flex items-center gap-1">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ getErrors('category_id')[0] }}</span>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div>
+        <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
+          <i class="fas fa-dollar-sign mr-1"></i>
+          Price *
+        </label>
+        <input
+          [(ngModel)]="selectedProduct.price"
+          name="price"
+          type="number"
+          step="0.01"
+          min="0.01"
+          max="999999.99"
+          required
+          placeholder="0.00"
+          (input)="clearFieldError('price')"
+          [class.border-red-500]="hasError('price')"
+          [class.border-[var(--color-neutral-light)]]="!hasError('price')"
+          class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
+        />
+        <div *ngIf="hasError('price')" class="mt-1 text-xs md:text-sm text-red-600 flex items-center gap-1">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ getErrors('price')[0] }}</span>
+        </div>
+      </div>
+
+      <!-- Stock Quantity -->
+      <div>
+        <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
+          <i class="fas fa-boxes mr-1"></i>
+          Stock Quantity
+        </label>
+        <input
+          [(ngModel)]="selectedProduct.stock_quantity"
+          name="stock_quantity"
+          type="number"
+          min="0"
+          max="999999"
+          placeholder="0"
+          (input)="clearFieldError('stock_quantity')"
+          [class.border-red-500]="hasError('stock_quantity')"
+          [class.border-[var(--color-neutral-light)]]="!hasError('stock_quantity')"
+          class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
+        />
+        <div *ngIf="hasError('stock_quantity')" class="mt-1 text-xs md:text-sm text-red-600 flex items-center gap-1">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ getErrors('stock_quantity')[0] }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="block text-sm font-medium mb-1 md:mb-2 text-[var(--color-neutral-dark)]">
+        <i class="fas fa-align-left mr-1"></i>
+        Description
+        <span class="text-xs text-gray-500 ml-1">({{ selectedProduct.description?.length || 0 }}/1000)</span>
       </label>
-
-      <!-- Existing Images (Edit Mode) -->
-      <div *ngIf="editMode && existingImages.length > 0" class="mt-3 md:mt-4">
-        <label class="block text-sm font-medium mb-2 md:mb-3 text-[var(--color-neutral-dark)]">
-          <i class="fas fa-images mr-1"></i>
-          Current Images
-        </label>
-        <div class="flex flex-wrap gap-2 md:gap-3">
-          <div
-            *ngFor="let img of existingImages; let i = index"
-            class="relative w-20 h-20 md:w-28 md:h-28 border-2 rounded-lg overflow-hidden group"
-            [class.border-[var(--color-primary)]]="img.is_main"
-            [class.border-[var(--color-neutral-light)]]="!img.is_main"
-          >
-            <img [src]="img.image_url" class="object-cover w-full h-full" alt="Product image" />
-            
-            <button
-              type="button"
-              class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 md:w-7 md:h-7 flex items-center justify-center opacity-70 md:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 text-xs"
-              (click)="removeExistingImage(i)"
-              title="Remove image"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-            
-            <button
-              type="button"
-              class="absolute bottom-1 left-1 text-xs px-1.5 py-0.5 md:px-2 md:py-1 rounded transition-all"
-              [class.bg-[var(--color-primary)]]="img.is_main"
-              [class.text-[var(--color-secondary)]]="img.is_main"
-              [class.bg-gray-500]="!img.is_main"
-              [class.text-white]="!img.is_main"
-              (click)="setMainImageExisting(i)"
-            >
-              <i class="fas fa-star mr-0.5 md:mr-1"></i>
-              {{ img.is_main ? 'Main' : 'Set Main' }}
-            </button>
-          </div>
-        </div>
+      <textarea
+        [(ngModel)]="selectedProduct.description"
+        name="description"
+        placeholder="Enter product description..."
+        rows="3"
+        maxlength="1000"
+        (input)="clearFieldError('description')"
+        [class.border-red-500]="hasError('description')"
+        [class.border-[var(--color-neutral-light)]]="!hasError('description')"
+        class="w-full px-3 md:px-4 py-2 md:py-2.5 border-2 rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
+      ></textarea>
+      <div *ngIf="hasError('description')" class="mt-1 text-xs md:text-sm text-red-600 flex items-center gap-1">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ getErrors('description')[0] }}</span>
       </div>
+    </div>
 
-      <!-- New Image Upload -->
-      <div class="mt-3 md:mt-4">
-        <label class="block text-sm font-medium mb-2 md:mb-3 text-[var(--color-neutral-dark)]">
-          <i class="fas fa-upload mr-1"></i>
-          {{ editMode ? 'Add New Images' : 'Upload Images' }} (Max 5)
-        </label>
-        
-        <div class="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-3">
-          <label class="cursor-pointer w-full sm:w-auto">
-            <div class="px-4 md:px-5 py-2 md:py-2.5 bg-[var(--color-accent-1)] text-white rounded-lg hover:bg-[var(--color-accent-2)] transition-all flex items-center gap-2 font-medium justify-center text-sm md:text-base">
-              <i class="fas fa-image"></i>
-              Choose Files
-            </div>
-            <input 
-              type="file" 
-              (change)="onImageSelect($event)" 
-              multiple 
-              accept="image/*"
-              class="hidden"
-            />
-          </label>
-          <span class="text-xs md:text-sm text-gray-600 text-center sm:text-left">
-            {{ imageFiles.length }} file(s) selected
-          </span>
-        </div>
+    <!-- Active Toggle -->
+    <label class="flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-[var(--color-neutral-light)] bg-opacity-30 rounded-lg cursor-pointer hover:bg-opacity-50 transition-all w-fit">
+      <input
+        [(ngModel)]="selectedProduct.is_active"
+        name="is_active"
+        type="checkbox"
+        class="w-4 h-4 accent-[var(--color-primary)]"
+      />
+      <span class="text-sm font-medium">Active Product</span>
+    </label>
 
-        <!-- New Image Previews -->
-        <div *ngIf="imagePreviews.length > 0" class="flex flex-wrap gap-2 md:gap-3 mt-2 md:mt-3">
-          <div
-            *ngFor="let img of imagePreviews; let i = index"
-            class="relative w-20 h-20 md:w-28 md:h-28 border-2 rounded-lg overflow-hidden group"
-            [class.border-[var(--color-primary)]]="mainImageIndex === i"
-            [class.border-[var(--color-neutral-light)]]="mainImageIndex !== i"
-          >
-            <img [src]="img" class="object-cover w-full h-full" alt="Preview" />
-            
-            <button
-              type="button"
-              class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 md:w-7 md:h-7 flex items-center justify-center opacity-70 md:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 text-xs"
-              (click)="removeNewImage(i)"
-              title="Remove image"
-            >
-              <i class="fas fa-times"></i>
-            </button>
-            
-            <button
-              type="button"
-              class="absolute bottom-1 left-1 text-xs px-1.5 py-0.5 md:px-2 md:py-1 rounded transition-all"
-              [class.bg-[var(--color-primary)]]="mainImageIndex === i"
-              [class.text-[var(--color-secondary)]]="mainImageIndex === i"
-              [class.bg-gray-500]="mainImageIndex !== i"
-              [class.text-white]="mainImageIndex !== i"
-              (click)="setMainImageNew(i)"
-            >
-              <i class="fas fa-star mr-0.5 md:mr-1"></i>
-              {{ mainImageIndex === i ? 'Main' : 'Set Main' }}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="mt-4 md:mt-6 flex flex-col sm:flex-row gap-2 md:gap-3 pt-3 md:pt-4 border-t border-[var(--color-neutral-light)]">
-        <button
-          type="submit"
-          [disabled]="loading"
-          class="bg-[var(--color-primary)] text-[var(--color-secondary)] px-4 md:px-6 py-2 md:py-2.5 rounded-lg hover:bg-[var(--color-accent-2)] transition-all shadow-md hover:shadow-lg flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed justify-center text-sm md:text-base"
+    <!-- Existing Images (Edit Mode) -->
+    <div *ngIf="editMode && existingImages.length > 0" class="mt-3 md:mt-4">
+      <label class="block text-sm font-medium mb-2 md:mb-3 text-[var(--color-neutral-dark)]">
+        <i class="fas fa-images mr-1"></i>
+        Current Images ({{ existingImages.length }}/5)
+      </label>
+      <div class="flex flex-wrap gap-2 md:gap-3">
+        <div
+          *ngFor="let img of existingImages; let i = index"
+          class="relative w-20 h-20 md:w-28 md:h-28 border-2 rounded-lg overflow-hidden group"
+          [class.border-[var(--color-primary)]]="img.is_main"
+          [class.border-[var(--color-neutral-light)]]="!img.is_main"
         >
-          <i class="fas fa-save"></i>
-          {{ loading ? 'Saving...' : (editMode ? 'Update Product' : 'Add Product') }}
-        </button>
-        
-        <button
-          *ngIf="editMode"
-          type="button"
-          (click)="resetForm()"
-          [disabled]="loading"
-          class="border-2 border-[var(--color-accent-2)] text-[var(--color-accent-2)] px-4 md:px-6 py-2 md:py-2.5 rounded-lg hover:bg-[var(--color-accent-1)] hover:text-white transition-all flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed justify-center text-sm md:text-base"
-        >
-          <i class="fas fa-times-circle"></i>
-          Cancel
-        </button>
+          <img [src]="img.image_url" class="object-cover w-full h-full" alt="Product image" />
+          
+          <button
+            type="button"
+            class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 md:w-7 md:h-7 flex items-center justify-center opacity-70 md:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 text-xs"
+            (click)="removeExistingImage(i)"
+            title="Remove image"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+          
+          <button
+            type="button"
+            class="absolute bottom-1 left-1 text-xs px-1.5 py-0.5 md:px-2 md:py-1 rounded transition-all"
+            [class.bg-[var(--color-primary)]]="img.is_main"
+            [class.text-[var(--color-secondary)]]="img.is_main"
+            [class.bg-gray-500]="!img.is_main"
+            [class.text-white]="!img.is_main"
+            (click)="setMainImageExisting(i)"
+          >
+            <i class="fas fa-star mr-0.5 md:mr-1"></i>
+            {{ img.is_main ? 'Main' : 'Set Main' }}
+          </button>
+        </div>
       </div>
-    </form>
-  </div>
+    </div>
 
+    <!-- New Image Upload -->
+    <div class="mt-3 md:mt-4">
+      <label class="block text-sm font-medium mb-2 md:mb-3 text-[var(--color-neutral-dark)]">
+        <i class="fas fa-upload mr-1"></i>
+        {{ editMode ? 'Add New Images' : 'Upload Images' }} *
+        <span class="text-xs text-gray-500">(Max 5 images, 5MB each, JPG/PNG/GIF/WEBP)</span>
+      </label>
+      
+      <div class="flex flex-col sm:flex-row sm:items-center gap-2 md:gap-3">
+        <label class="cursor-pointer w-full sm:w-auto">
+          <div class="px-4 md:px-5 py-2 md:py-2.5 bg-[var(--color-accent-1)] text-white rounded-lg hover:bg-[var(--color-accent-2)] transition-all flex items-center gap-2 font-medium justify-center text-sm md:text-base">
+            <i class="fas fa-image"></i>
+            Choose Files
+          </div>
+          <input 
+            type="file" 
+            (change)="onImageSelect($event)" 
+            multiple 
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+            class="hidden"
+          />
+        </label>
+        <span class="text-xs md:text-sm text-gray-600 text-center sm:text-left">
+          {{ imageFiles.length }} file(s) selected
+        </span>
+      </div>
+
+      <div *ngIf="hasError('images')" class="mt-2 text-xs md:text-sm text-red-600">
+        <div *ngFor="let error of getErrors('images')" class="flex items-center gap-1 mb-1">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ error }}</span>
+        </div>
+      </div>
+
+      <!-- New Image Previews -->
+      <div *ngIf="imagePreviews.length > 0" class="flex flex-wrap gap-2 md:gap-3 mt-2 md:mt-3">
+        <div
+          *ngFor="let img of imagePreviews; let i = index"
+          class="relative w-20 h-20 md:w-28 md:h-28 border-2 rounded-lg overflow-hidden group"
+          [class.border-[var(--color-primary)]]="mainImageIndex === i"
+          [class.border-[var(--color-neutral-light)]]="mainImageIndex !== i"
+        >
+          <img [src]="img" class="object-cover w-full h-full" alt="Preview" />
+          
+          <button
+            type="button"
+            class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 md:w-7 md:h-7 flex items-center justify-center opacity-70 md:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 text-xs"
+            (click)="removeNewImage(i)"
+            title="Remove image"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+          
+          <button
+            type="button"
+            class="absolute bottom-1 left-1 text-xs px-1.5 py-0.5 md:px-2 md:py-1 rounded transition-all"
+            [class.bg-[var(--color-primary)]]="mainImageIndex === i"
+            [class.text-[var(--color-secondary)]]="mainImageIndex === i"
+            [class.bg-gray-500]="mainImageIndex !== i"
+            [class.text-white]="mainImageIndex !== i"
+            (click)="setMainImageNew(i)"
+          >
+            <i class="fas fa-star mr-0.5 md:mr-1"></i>
+            {{ mainImageIndex === i ? 'Main' : 'Set Main' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-4 md:mt-6 flex flex-col sm:flex-row gap-2 md:gap-3 pt-3 md:pt-4 border-t border-[var(--color-neutral-light)]">
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="bg-[var(--color-primary)] text-[var(--color-secondary)] px-4 md:px-6 py-2 md:py-2.5 rounded-lg hover:bg-[var(--color-accent-2)] transition-all shadow-md hover:shadow-lg flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed justify-center text-sm md:text-base"
+      >
+        <i class="fas fa-save"></i>
+        {{ loading ? 'Saving...' : (editMode ? 'Update Product' : 'Add Product') }}
+      </button>
+      
+      <button
+        *ngIf="editMode"
+        type="button"
+        (click)="resetForm()"
+        [disabled]="loading"
+        class="border-2 border-[var(--color-accent-2)] text-[var(--color-accent-2)] px-4 md:px-6 py-2 md:py-2.5 rounded-lg hover:bg-[var(--color-accent-1)] hover:text-white transition-all flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed justify-center text-sm md:text-base"
+      >
+        <i class="fas fa-times-circle"></i>
+        Cancel
+      </button>
+    </div>
+  </form>
+</div>
   <!-- Loading State -->
   <div *ngIf="loading && !editMode" class="text-center py-12 md:py-20 animate-fadeIn">
     <i class="fas fa-spinner fa-spin text-4xl md:text-5xl text-[var(--color-accent-2)]"></i>

@@ -45,52 +45,88 @@
       <i [class]="editMode ? 'fas fa-edit' : 'fas fa-plus-circle'"></i>
       {{ editMode ? 'Edit Category' : 'Add New Category' }}
     </h2>
-    <form (ngSubmit)="saveCategory()" class="flex flex-col md:flex-row md:flex-wrap gap-3 md:gap-4 md:items-end">
-      <div class="flex-1 min-w-full md:min-w-[250px]">
-        <label class="block text-xs md:text-sm font-medium mb-2 text-[var(--color-neutral-dark)]">
-          <i class="fas fa-tag mr-1"></i>
-          Category Name
-        </label>
-        <input
-          [(ngModel)]="selectedCategory.name"
-          name="name"
-          type="text"
-          placeholder="Enter category name"
-          required
-          class="w-full px-4 py-2.5 border-2 border-[var(--color-neutral-light)] rounded-lg focus:ring-2 focus:ring-[var(--color-accent-2)] focus:border-transparent transition-all text-sm md:text-base"
-        />
-      </div>
+    <form (ngSubmit)="saveCategory()" #categoryForm="ngForm" class="bg-white/60 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-[var(--color-neutral-light)]">
+      <div class="flex flex-col md:flex-row md:flex-wrap gap-4 md:gap-6">
+        <!-- Category Name Input -->
+        <div class="flex-1 min-w-full md:min-w-[280px]">
+          <!-- <label class="block text-sm font-semibold mb-2.5 text-[var(--color-neutral-dark)]">
+            <i class="fas fa-tag mr-2 text-[var(--color-accent-2)]"></i>
+            Category Name
+          </label> -->
+          <div class="relative">
+            <input
+              [(ngModel)]="selectedCategory.name"
+              name="name"
+              type="text"
+              placeholder="e.g., Lipsticks, Skincare..."
+              required
+              minlength="2"
+              #nameInput="ngModel"
+              class="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-[var(--color-accent-1)] focus:border-[var(--color-accent-2)] transition-all text-base bg-white shadow-sm"
+              [class.border-red-400]="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
+              [class.border-[var(--color-neutral-light)]="nameInput.valid || (nameInput.untouched && nameInput.pristine)"
+              [class.focus:border-red-400]="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
+            />
+            <!-- Success Icon -->
+            <div *ngIf="nameInput.valid && nameInput.dirty" class="absolute right-3 top-1/2 -translate-y-1/2">
+              <i class="fas fa-check-circle text-green-500 text-lg"></i>
+            </div>
+          </div>
+          <!-- Error Messages -->
+          <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="mt-2 animate-fadeIn">
+            <p *ngIf="nameInput.errors?.['required']" class="text-red-500 text-sm flex items-center gap-2 bg-red-50 px-3 py-2 rounded-lg">
+              <i class="fas fa-exclamation-circle"></i>
+              <span class="font-medium">Category name is required</span>
+            </p>
+            <p *ngIf="nameInput.errors?.['minlength']" class="text-red-500 text-sm flex items-center gap-2 bg-red-50 px-3 py-2 rounded-lg">
+              <i class="fas fa-exclamation-circle"></i>
+              <span class="font-medium">Name must be at least 2 characters</span>
+            </p>
+          </div>
+        </div>
 
-      <label class="flex items-center gap-2 px-4 py-2.5 bg-[var(--color-neutral-light)] bg-opacity-30 rounded-lg cursor-pointer hover:bg-opacity-50 transition-all">
-        <input
-          [(ngModel)]="selectedCategory.is_active"
-          name="is_active"
-          type="checkbox"
-          class="w-4 h-4 accent-[var(--color-primary)]"
-        />
-        <span class="text-xs md:text-sm font-medium">
-          Active
-        </span>
-      </label>
+        <!-- Active Checkbox -->
+        <div class="flex items-start">
+          <label class="flex items-start gap-3 px-5 py-3 bg-gradient-to-r from-[var(--color-neutral-light)]/40 to-[var(--color-neutral-light)]/20 rounded-xl cursor-pointer hover:from-[var(--color-neutral-light)]/60 hover:to-[var(--color-neutral-light)]/40 transition-all border border-[var(--color-neutral-light)] shadow-sm">
+            <input
+              [(ngModel)]="selectedCategory.is_active"
+              name="is_active"
+              type="checkbox"
+              class="w-5 h-5 accent-[var(--color-primary)] rounded cursor-pointer"
+            />
+            <span class="text-sm font-semibold text-[var(--color-neutral-dark)] flex items-center gap-2">
+              
+              Active Status
+            </span>
+          </label>
+        </div>
 
-      <div class="flex gap-2 md:gap-3">
-        <button
-          type="submit"
-          class="flex-1 md:flex-none bg-[var(--color-primary)] text-[var(--color-secondary)] px-5 md:px-6 py-2.5 rounded-lg hover:bg-[var(--color-accent-2)] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 font-medium text-sm md:text-base"
-        >
-          <i [class]="editMode ? 'fas fa-save' : 'fas fa-plus'"></i>
-          {{ editMode ? 'Update' : 'Add' }}
-        </button>
+        <!-- Action Buttons -->
+        <div class="flex gap-3 md:ml-auto md:items-start w-full md:w-auto">
+          <button
+            type="submit"
+            [disabled]="categoryForm.invalid"
+            class="flex-1 md:flex-none bg-[var(--color-primary)] text-[var(--color-secondary)] px-6 py-3 rounded-xl transition-all shadow-md flex items-center justify-center gap-2.5 font-semibold text-base relative overflow-hidden group disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+            [class.hover:bg-[var(--color-accent-2)]="categoryForm.valid"
+            [class.hover:shadow-xl]="categoryForm.valid"
+            [class.hover:scale-105]="categoryForm.valid"
+          >
+            <i [class]="editMode ? 'fas fa-save' : 'fas fa-plus'" class="text-lg"></i>
+            <span>{{ editMode ? 'Update Category' : 'Add Category' }}</span>
+            <!-- Shine Effect on Hover -->
+            <div *ngIf="categoryForm.valid" class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+          </button>
 
-        <button
-          type="button"
-          *ngIf="editMode"
-          (click)="resetForm()"
-          class="flex-1 md:flex-none border-2 border-[var(--color-accent-2)] text-[var(--color-accent-2)] px-5 md:px-6 py-2.5 rounded-lg hover:bg-[var(--color-accent-1)] hover:text-white transition-all flex items-center justify-center gap-2 font-medium text-sm md:text-base"
-        >
-          <i class="fas fa-times-circle"></i>
-          Cancel
-        </button>
+          <button
+            type="button"
+            *ngIf="editMode"
+            (click)="resetForm()"
+            class="flex-1 md:flex-none border-2 border-[var(--color-accent-2)] text-[var(--color-accent-2)] px-6 py-3 rounded-xl hover:bg-[var(--color-accent-2)] hover:text-white hover:shadow-lg transition-all flex items-center justify-center gap-2.5 font-semibold text-base hover:scale-105"
+          >
+            <i class="fas fa-times-circle text-lg"></i>
+            <span>Cancel</span>
+          </button>
+        </div>
       </div>
     </form>
   </div>

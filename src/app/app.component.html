@@ -26,7 +26,7 @@
       <li><a routerLink="/contact" class="relative group text-[var(--color-primary)]">Contact</a></li>
       
       <!-- ✅ Client Links -->
-      <li *ngIf="isAuthenticated() && !isAdmin()">
+      <li *ngIf="isAuthenticated()">
         <a routerLink="/myorders" class="relative group text-[var(--color-primary)]">My Orders</a>
       </li>
 

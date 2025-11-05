@@ -140,31 +140,39 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   /** 🧾 Place Order */
-  placeOrder() {
-    if (this.cartItems.length === 0) {
-      alert('Your cart is empty.');
-      return;
-    }
-
-    this.placingOrder = true;
-    const orderItems = this.cartItems.map((i) => ({
-      product_id: i.id!,
-      quantity: i.quantity,
-    }));
-
-    this.orderService.placeOrder(orderItems).subscribe({
-      next: (res) => {
-        alert('✅ Order placed successfully!');
-        this.clearCart();
-        this.togglePopup();
-      },
-      error: (err) => {
-        console.error(err);
-        alert('❌ Failed to place order. Please login first.');
-        this.router.navigate(["/login"]);
-        this.placingOrder = false;
-      },
-      complete: () => (this.placingOrder = false),
-    });
+ 
+placeOrder() {
+  if (this.cartItems.length === 0) {
+    alert('Your cart is empty.');
+    return;
   }
+
+  // ✅ Check if user is logged in
+  if (!this.auth.isAuthenticated()) {
+    alert('⚠️ You must login to place an order.');
+    this.togglePopup();
+    this.router.navigate(['/login']);
+    return;
+  }
+
+  this.placingOrder = true;
+  const orderItems = this.cartItems.map((i) => ({
+    product_id: i.id!,
+    quantity: i.quantity,
+  }));
+
+  this.orderService.placeOrder(orderItems).subscribe({
+    next: (res) => {
+      alert('✅ Order placed successfully!');
+      this.clearCart();
+      this.togglePopup();
+    },
+    error: (err) => {
+      console.error(err);
+      alert('❌ Failed to place order. Please try again.');
+    },
+    complete: () => (this.placingOrder = false),
+  });
+}
+
 }
